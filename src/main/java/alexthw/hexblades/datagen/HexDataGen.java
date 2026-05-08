@@ -1,15 +1,16 @@
 package alexthw.hexblades.datagen;
 
 import alexthw.hexblades.Hexblades;
-import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+
+import java.util.concurrent.CompletableFuture;
 
 @Mod.EventBusSubscriber(modid = Hexblades.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-
 public final class HexDataGen {
     private HexDataGen() {
     }
@@ -17,15 +18,17 @@ public final class HexDataGen {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {
         DataGenerator gen = event.getGenerator();
+        PackOutput packOutput = gen.getPackOutput();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+        CompletableFuture<net.minecraft.core.HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        BlockTagsProvider BTprovider = new HexBlockTagsProvider(gen, existingFileHelper);
+        HexBlockTagsProvider blockTagsProvider = new HexBlockTagsProvider(packOutput, lookupProvider, existingFileHelper);
 
-        gen.addProvider(new HexItemModelProvider(gen, existingFileHelper));
-        gen.addProvider(new HexBlockStateProvider(gen, existingFileHelper));
-        gen.addProvider(BTprovider);
-        gen.addProvider(new HexItemTagProvider(gen, BTprovider, existingFileHelper));
-        gen.addProvider(new HexRecipeProvider(gen));
-        gen.addProvider(new HexLootTableProvider(gen));
+        gen.addProvider(event.includeClient(), new HexItemModelProvider(packOutput, existingFileHelper));
+        gen.addProvider(event.includeClient(), new HexBlockStateProvider(packOutput, existingFileHelper));
+        gen.addProvider(event.includeServer(), blockTagsProvider);
+        gen.addProvider(event.includeServer(), new HexItemTagProvider(packOutput, lookupProvider, blockTagsProvider, existingFileHelper));
+        gen.addProvider(event.includeServer(), new HexRecipeProvider(packOutput));
+        gen.addProvider(event.includeServer(), new HexLootTableProvider(packOutput));
     }
 }

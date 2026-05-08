@@ -1,11 +1,10 @@
 package alexthw.hexblades.common.entity.ai.fe;
 
 import alexthw.hexblades.common.entity.FireElementalEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 public class FireSpinAttackGoal extends MeleeAttackGoal {
-
 
     FireElementalEntity Firenando;
     int cooldown;
@@ -47,7 +46,6 @@ public class FireSpinAttackGoal extends MeleeAttackGoal {
         super.tick();
 
         LivingEntity livingentity = this.mob.getTarget();
-
         if (livingentity == null) return;
 
         this.cooldown = Math.max(cooldown - 1, 0);
@@ -64,7 +62,6 @@ public class FireSpinAttackGoal extends MeleeAttackGoal {
             Firenando.setAnimationState(0);
             this.Firenando.addFireCharge(-3);
         }
-
     }
 
     @Override
@@ -75,5 +72,4 @@ public class FireSpinAttackGoal extends MeleeAttackGoal {
             this.Firenando.setAnimationState(3);
         }
     }
-
 }

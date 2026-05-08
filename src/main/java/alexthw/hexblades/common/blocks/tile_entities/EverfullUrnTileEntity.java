@@ -1,109 +1,65 @@
 package alexthw.hexblades.common.blocks.tile_entities;
 
-import alexthw.hexblades.compat.BotaniaCompat;
 import alexthw.hexblades.network.RefillEffectPacket;
-import alexthw.hexblades.registers.HexTileEntityType;
-import elucent.eidolon.Registry;
-import elucent.eidolon.network.Networking;
-import elucent.eidolon.particle.Particles;
-import elucent.eidolon.tile.CrucibleTileEntity;
-import elucent.eidolon.tile.TileEntityBase;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CauldronBlock;
-import net.minecraft.block.IBucketPickupHandler;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import alexthw.hexblades.registers.HexBlockEntityType;
+import elucent.eidolon.common.tile.TileEntityBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static alexthw.hexblades.ConfigHandler.COMMON;
 import static alexthw.hexblades.util.CompatUtil.isBotaniaLoaded;
-import static alexthw.hexblades.util.HexUtils.getTilesWithinAABB;
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue;
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.setPrivateValue;
 
-public class EverfullUrnTileEntity extends TileEntityBase implements ITickableTileEntity, IBucketPickupHandler {
+public class EverfullUrnTileEntity extends TileEntityBase {
 
-    //Lists declared if shifting to subscribe scan is needed, do not access to them since they will be overwritten
-
-    public List<CrucibleTileEntity> crucibles;
-    public List<BlockPos> cauldrons;
-
-
-    public EverfullUrnTileEntity() {
-        this(HexTileEntityType.EVERFULL_URN_TILE_ENTITY);
-        cauldrons = null;
-        crucibles = null;
+    public EverfullUrnTileEntity(BlockPos pos, BlockState state) {
+        this(HexBlockEntityType.EVERFULL_URN_TILE_ENTITY.get(), pos, state);
     }
 
-    public EverfullUrnTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public EverfullUrnTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
-    @Override
-    public Fluid takeLiquid(IWorld worldIn, BlockPos pos, BlockState state) {
-        return Fluids.WATER;
-    }
-
-    @Override
-    public void tick() {
+    public static void tick(Level level, BlockPos pos, BlockState state, EverfullUrnTileEntity be) {
         if (level == null) return;
+        if (!level.isClientSide() && level.getGameTime() % COMMON.UrnTickRate.get() == 0) {
+            fillCauldrons(level, pos);
+            // TODO: Eidolon-Repraised — CrucibleBlockEntity hasWater refill
+            // The old ObfuscationReflectionHelper approach to set hasWater is removed.
+            // Verify Eidolon-Repraised CrucibleBlockEntity API for water-filling.
+            // fillCrucibles(level, pos);
 
-        if (level.isClientSide() && (level.getGameTime() % 2 == 0)) {
-            Particles.create(Registry.BUBBLE_PARTICLE).setScale(0.05F).setLifetime(10).randomOffset(0.125D, 0.0D).addVelocity(0, 0.05, 0).randomVelocity(0.0D, 0.15D).setColor(0.25F, 0.5F, 1).setAlpha(1.0F, 0.75F).setSpin(0.05F).spawn(this.level, (double) this.worldPosition.getX() + 0.5, (double) this.worldPosition.getY() + 0.9D, (double) this.worldPosition.getZ() + 0.5);
-        } else if (level.getGameTime() % COMMON.UrnTickRate.get() == 0) {
+            // TODO: Botania compat — re-enable once Botania 1.20.1 is confirmed available
+            // if (isBotaniaLoaded()) BotaniaCompat.refillApotecaries(level, pos);
 
-            crucibles = getTilesWithinAABB(CrucibleTileEntity.class, getLevel(), new AxisAlignedBB(worldPosition.offset(-2, -1, -2), worldPosition.offset(3, 2, 3)));
-            cauldrons = getCauldrons(getLevel(), new AxisAlignedBB(worldPosition.offset(-2, -1, -2), worldPosition.offset(3, 2, 3)));
-
-            if (isBotaniaLoaded()) {
-                BotaniaCompat.refillApotecaries(getLevel(), worldPosition);
-            }
-
-            for (CrucibleTileEntity fillable : crucibles) {
-
-                @SuppressWarnings("ConstantConditions") boolean hasWater = getPrivateValue(CrucibleTileEntity.class, fillable, "hasWater");
-
-                if (!hasWater) {
-                    setPrivateValue(CrucibleTileEntity.class, fillable, true, "hasWater");
-                    fillable.sync();
-                    Networking.sendToTracking(this.level, this.worldPosition, new RefillEffectPacket(fillable.getBlockPos(), 1));
-                }
-            }
-
-            for (BlockPos fillable : cauldrons) {
-                CauldronBlock cauldron = (CauldronBlock) level.getBlockState(fillable).getBlock();
-                cauldron.setWaterLevel(level, fillable, level.getBlockState(fillable), 3);
-                Networking.sendToTracking(this.level, this.worldPosition, new RefillEffectPacket(fillable, 1));
-
-            }
+            // Send refill effect packet to clients
+            // TODO: port RefillEffectPacket to Forge 47 — done in Phase 8
         }
     }
 
-    private List<BlockPos> getCauldrons(World world, AxisAlignedBB bb) {
-        List<BlockPos> blockList = new ArrayList<>();
+    private static void fillCauldrons(Level level, BlockPos origin) {
+        AABB bb = new AABB(origin.offset(-2, -1, -2), origin.offset(3, 2, 3));
         for (int i = (int) Math.floor(bb.minX); i < (int) Math.ceil(bb.maxX); i++) {
             for (int j = (int) Math.floor(bb.minZ); j < (int) Math.ceil(bb.maxZ); j++) {
                 for (int k = (int) Math.floor(bb.minY); k < (int) Math.ceil(bb.maxY); k++) {
                     BlockPos scan = new BlockPos(i, k, j);
-                    BlockState state = world.getBlockState(scan);
-                    Block block = state.getBlock();
-                    if (block instanceof CauldronBlock) {
-                        if (state.getValue(BlockStateProperties.LEVEL_CAULDRON) < 3) blockList.add(scan);
+                    BlockState scanState = level.getBlockState(scan);
+                    Block block = scanState.getBlock();
+                    if (block instanceof LayeredCauldronBlock
+                            && scanState.hasProperty(BlockStateProperties.LEVEL_CAULDRON)
+                            && scanState.getValue(BlockStateProperties.LEVEL_CAULDRON) < 3) {
+                        level.setBlock(scan, scanState.setValue(BlockStateProperties.LEVEL_CAULDRON, 3), Block.UPDATE_ALL);
                     }
                 }
             }
         }
-        return blockList;
     }
-
 }

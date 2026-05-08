@@ -1,0 +1,15 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [],
+  "pedestalItems": [
+    { "item": "minecraft:prismarine_crystals" },
+    { "item": "minecraft:heart_of_the_sea" },
+    { "item": "hexblades:elemental_soul" },
+    { "item": "hexblades:drowned_heart" },
+    { "item": "minecraft:prismarine_crystals" }
+  ],
+  "reagent": [
+    { "item": "hexblades:water_saber_1" }
+  ],
+  "ritual": "hexblades:evolve_water_saber"
+}

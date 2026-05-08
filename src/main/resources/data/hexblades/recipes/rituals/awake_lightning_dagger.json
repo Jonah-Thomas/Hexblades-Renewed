@@ -1,0 +1,16 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [
+    { "item": "hexblades:dagger_dull" }
+  ],
+  "pedestalItems": [
+    { "item": "eidolon:arcane_gold_ingot" },
+    { "item": "eidolon:arcane_gold_ingot" },
+    { "item": "eidolon:pewter_ingot" },
+    { "item": "eidolon:pewter_ingot" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_core" }
+  ],
+  "ritual": "hexblades:awake_lightning_dagger"
+}

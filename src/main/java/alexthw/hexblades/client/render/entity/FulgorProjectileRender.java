@@ -1,20 +1,17 @@
 package alexthw.hexblades.client.render.entity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.SpriteRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.IRendersAsItem;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.projectile.ItemSupplier;
 
-public class FulgorProjectileRender<T extends Entity & IRendersAsItem> extends SpriteRenderer<T> {
-    public FulgorProjectileRender(EntityRendererManager renderManagerIn) {
-        super(renderManagerIn, Minecraft.getInstance().getItemRenderer());
-    }
-
-    @Override
-    public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
-        super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+public class FulgorProjectileRender<T extends Entity & ItemSupplier> extends ThrownItemRenderer<T> {
+    public FulgorProjectileRender(EntityRendererProvider.Context context) {
+        super(context);
     }
 }

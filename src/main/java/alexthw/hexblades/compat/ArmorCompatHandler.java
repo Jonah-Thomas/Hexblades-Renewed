@@ -3,13 +3,13 @@ package alexthw.hexblades.compat;
 import alexthw.hexblades.common.items.armors.HexWArmor;
 import alexthw.hexblades.registers.HexItem;
 import alexthw.hexblades.util.CompatUtil;
-import elucent.eidolon.Registry;
 import elucent.eidolon.codex.Page;
 import elucent.eidolon.codex.TitlePage;
 import elucent.eidolon.codex.WorktablePage;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import elucent.eidolon.registries.Registry;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,48 +21,45 @@ import static alexthw.hexblades.codex.CodexHexChapters.nukeRecipe;
 
 public class ArmorCompatHandler {
 
-
     public static HexWArmor makeChest(Item.Properties properties) {
-        EquipmentSlotType slot = EquipmentSlotType.CHEST;
+        ArmorItem.Type type = ArmorItem.Type.CHESTPLATE;
         if (CompatUtil.isBotaniaLoaded() && CompatUtil.isArsNovLoaded())
-            return ArsBotaniaHandler.makeArmor(slot, properties);
-        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(slot, properties);
-        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(slot, properties);
-
-        return new HexWArmor(slot, properties);
+            return ArsBotaniaHandler.makeArmor(type, properties);
+        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(type, properties);
+        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(type, properties);
+        return new HexWArmor(type, properties);
     }
 
     public static HexWArmor makeHead(Item.Properties properties) {
-        EquipmentSlotType slot = EquipmentSlotType.HEAD;
+        ArmorItem.Type type = ArmorItem.Type.HELMET;
         if (CompatUtil.isBotaniaLoaded() && CompatUtil.isArsNovLoaded())
-            return ArsBotaniaHandler.makeArmor(slot, properties);
-        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(slot, properties);
-        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(slot, properties);
-
-        return new HexWArmor(slot, properties);
+            return ArsBotaniaHandler.makeArmor(type, properties);
+        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(type, properties);
+        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(type, properties);
+        return new HexWArmor(type, properties);
     }
 
     public static HexWArmor makeFeet(Item.Properties properties) {
-        EquipmentSlotType slot = EquipmentSlotType.FEET;
+        ArmorItem.Type type = ArmorItem.Type.BOOTS;
         if (CompatUtil.isBotaniaLoaded() && CompatUtil.isArsNovLoaded())
-            return ArsBotaniaHandler.makeArmor(slot, properties);
-        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(slot, properties);
-        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(slot, properties);
-
-        return new HexWArmor(slot, properties);
+            return ArsBotaniaHandler.makeArmor(type, properties);
+        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(type, properties);
+        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(type, properties);
+        return new HexWArmor(type, properties);
     }
 
     public static HexWArmor makeLegs(Item.Properties properties) {
-        EquipmentSlotType slot = EquipmentSlotType.LEGS;
+        ArmorItem.Type type = ArmorItem.Type.LEGGINGS;
         if (CompatUtil.isBotaniaLoaded() && CompatUtil.isArsNovLoaded())
-            return ArsBotaniaHandler.makeArmor(slot, properties);
-        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(slot, properties);
-        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(slot, properties);
-
-        return new HexWArmor(slot, properties);
+            return ArsBotaniaHandler.makeArmor(type, properties);
+        if (CompatUtil.isBotaniaLoaded()) return BotaniaCompat.makeArmor(type, properties);
+        if (CompatUtil.isArsNovLoaded()) return ArsNouveauCompat.makeArmor(type, properties);
+        return new HexWArmor(type, properties);
     }
 
     public static void attachRenderers() {
+        // GeckoLib4: armor renderer registration is done via initializeClient() on the item itself
+        // Compat armor renderers (Botania/ArsNouveau) handled in their respective compat classes
         if (CompatUtil.isBotaniaLoaded() && CompatUtil.isArsNovLoaded()) {
             ArsBotaniaHandler.renderer();
             return;
@@ -75,30 +72,19 @@ public class ArmorCompatHandler {
     }
 
     public static Page[] makeCodex() {
-
         List<Page> pages = new ArrayList<>();
 
         TitlePage warlock = new TitlePage(makePageKey("warlock_focus"));
-        WorktablePage warlockCraft = new WorktablePage(new ItemStack(HexItem.FOCUS_WARLOCK.get(),1),
-                ItemStack.EMPTY, new ItemStack(Registry.WICKED_WEAVE.get()), ItemStack.EMPTY,
-                new ItemStack(Registry.WICKED_WEAVE.get()), new ItemStack(HexItem.FOCUS_BASE.get()), new ItemStack(Registry.WICKED_WEAVE.get()),
-                ItemStack.EMPTY, new ItemStack(Registry.WICKED_WEAVE.get()), ItemStack.EMPTY,
+        WorktablePage warlockCraft = new WorktablePage(new ItemStack(HexItem.FOCUS_WARLOCK.get(), 1));
 
-                new ItemStack(Registry.ARCANE_GOLD_NUGGET.get()),
-                new ItemStack(Registry.ARCANE_GOLD_NUGGET.get()),
-                new ItemStack(Registry.ARCANE_GOLD_NUGGET.get()),
-                new ItemStack(Registry.ARCANE_GOLD_NUGGET.get())
-        );
-
-        Collections.addAll(pages, warlock, nukeRecipe(COMMON.NUKE_WORKBENCH.get(),warlockCraft));
+        Collections.addAll(pages, warlock, nukeRecipe(COMMON.NUKE_WORKBENCH.get(), warlockCraft));
 
         if (CompatUtil.isBotaniaLoaded()) {
-            Collections.addAll(pages,BotaniaCompat.makeCodex());
+            Collections.addAll(pages, BotaniaCompat.makeCodex());
         }
         if (CompatUtil.isArsNovLoaded()) {
-            Collections.addAll(pages,ArsNouveauCompat.makeCodex());
+            Collections.addAll(pages, ArsNouveauCompat.makeCodex());
         }
-
 
         return pages.toArray(new Page[0]);
     }

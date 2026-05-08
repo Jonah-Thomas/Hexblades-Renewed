@@ -1,6 +1,6 @@
 package alexthw.hexblades.mixin;
 
-import elucent.eidolon.tile.BrazierTileEntity;
+import elucent.eidolon.common.tile.BrazierTileEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 

@@ -1,6 +1,5 @@
 package alexthw.hexblades.registers;
 
-import alexthw.hexblades.Hexblades;
 import alexthw.hexblades.common.items.ArmorFocus;
 import alexthw.hexblades.common.items.ElementalSoul;
 import alexthw.hexblades.common.items.HexSwordItem;
@@ -9,19 +8,19 @@ import alexthw.hexblades.common.items.dulls.*;
 import alexthw.hexblades.common.items.tier1.*;
 import alexthw.hexblades.common.items.tier2.*;
 import alexthw.hexblades.compat.ArmorCompatHandler;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
-import net.minecraft.item.Rarity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 public class HexItem {
 
     static Item.Properties addTabProp() {
-        return new Item.Properties().tab(Hexblades.TAB);
+        return new Item.Properties();
     }
 
     public static final DeferredRegister<Item> ITEMS = Registry.ITEMS;
@@ -54,7 +53,6 @@ public class HexItem {
     public static final RegistryObject<Item> FOCUS_NOUVEAU;
 
     //Hexblades
-
     public static final RegistryObject<Item> DEV_SWORD;
     public static final RegistryObject<Item> BLOOD_SWORD;
 
@@ -80,7 +78,6 @@ public class HexItem {
     public static final RegistryObject<Item> LIGHTNING_SSWORD_L;
 
     static {
-
         //Items
         HEXIUM_INGOT = ITEMS.register("hexium_ingot", () -> new Item(addTabProp()));
         HEXED_INGOT = ITEMS.register("hexed_ingot", () -> new Item(addTabProp()));
@@ -88,13 +85,16 @@ public class HexItem {
         PATRON_SOUL2 = ITEMS.register("elemental_soul_2", () -> new Item(addTabProp().rarity(Rarity.EPIC)));
         DROWNED_HEART = ITEMS.register("drowned_heart", () -> new Item(addTabProp()));
         ELEMENTAL_CORE = ITEMS.register("elemental_core", () -> new Item(addTabProp().fireResistant().rarity(Rarity.RARE)));
-        SOUL_CANDY = ITEMS.register("soul_candy", () -> new Item(addTabProp().food(new Food.Builder().effect(() -> new EffectInstance(Effects.REGENERATION, 40, 1), 1.0F).fast().nutrition(1).saturationMod(0.1F).build())));
+        SOUL_CANDY = ITEMS.register("soul_candy", () -> new Item(addTabProp().food(
+                new FoodProperties.Builder()
+                        .effect(() -> new MobEffectInstance(MobEffects.REGENERATION, 40, 1), 1.0F)
+                        .fast().nutrition(1).saturationMod(0.1F).build())));
         FIRE_CORE = ITEMS.register("fire_core", () -> new Item(addTabProp().rarity(Rarity.UNCOMMON)));
 
         //Armors
-        DYE_WARLOCK_H = ITEMS.register("dye_warlock_hat", () -> new DyebleWarlockArmor(EquipmentSlotType.HEAD, addTabProp()));
-        DYE_WARLOCK_C = ITEMS.register("dye_warlock_robes", () -> new DyebleWarlockArmor(EquipmentSlotType.CHEST, addTabProp()));
-        DYE_WARLOCK_F = ITEMS.register("dye_warlock_boots", () -> new DyebleWarlockArmor(EquipmentSlotType.FEET, addTabProp()));
+        DYE_WARLOCK_H = ITEMS.register("dye_warlock_hat", () -> new DyebleWarlockArmor(net.minecraft.world.item.ArmorItem.Type.HELMET, addTabProp()));
+        DYE_WARLOCK_C = ITEMS.register("dye_warlock_robes", () -> new DyebleWarlockArmor(net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, addTabProp()));
+        DYE_WARLOCK_F = ITEMS.register("dye_warlock_boots", () -> new DyebleWarlockArmor(net.minecraft.world.item.ArmorItem.Type.BOOTS, addTabProp()));
 
         HEX_ARMOR_H = ITEMS.register("hex_helmet", () -> ArmorCompatHandler.makeHead(addTabProp()));
         HEX_ARMOR_C = ITEMS.register("hex_chestplate", () -> ArmorCompatHandler.makeChest(addTabProp()));
@@ -134,7 +134,5 @@ public class HexItem {
         LIGHTNING_DAGGER_L = ITEMS.register("thunder_knives_left1", () -> new Lightning_SSwordL1(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.UNCOMMON)));
         LIGHTNING_SSWORD_R = ITEMS.register("thunder_knives_right2", () -> new Lightning_SSwordR2(addTabProp().fireResistant().rarity(Rarity.RARE)));
         LIGHTNING_SSWORD_L = ITEMS.register("thunder_knives_left2", () -> new Lightning_SSwordL2(addTabProp().fireResistant().rarity(Rarity.RARE)));
-
     }
-
 }

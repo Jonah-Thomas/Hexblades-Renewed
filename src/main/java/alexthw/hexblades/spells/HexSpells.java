@@ -2,11 +2,11 @@ package alexthw.hexblades.spells;
 
 import alexthw.hexblades.Hexblades;
 import alexthw.hexblades.deity.HexDeities;
-import elucent.eidolon.spell.PrayerSpell;
-import elucent.eidolon.spell.Signs;
-import elucent.eidolon.spell.Spell;
-import elucent.eidolon.spell.Spells;
-import net.minecraft.util.ResourceLocation;
+import elucent.eidolon.api.spells.Spell;
+import elucent.eidolon.common.spell.PrayerSpell;
+import elucent.eidolon.registries.Signs;
+import elucent.eidolon.registries.Spells;
+import net.minecraft.resources.ResourceLocation;
 
 public class HexSpells {
 

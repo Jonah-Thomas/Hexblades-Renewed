@@ -1,220 +1,146 @@
-//file:noinspection GroovyAssignabilityCheck
-buildscript {
-    repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://maven.parchmentmc.org' }
-        maven {
-            name "Sponge"
-            url "https://repo.spongepowered.org/repository/maven-public/"
-        }
-        mavenCentral()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-    }
-
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 version = "${mc_version}-${mod_version}"
-group = 'alexthw.hexblades'
-archivesBaseName = project.mod_id
+group = "${mod_group_id}"
+archivesBaseName = mod_id
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
-sourceSets{
-    main.resources.srcDirs += 'src/main/generated_resources'
+sourceSets {
+    main.resources.srcDirs += 'src/generated/resources'
 }
 
 minecraft {
+    mappings channel: 'official', version: "${mc_version}"
 
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'parchment', version: '2021.10.17-1.16.5'
-
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    copyIdeResources = true
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
-
+            jvmArgs '-Xmx4G', '-Xms2G', '-XX:+IgnoreUnrecognizedVMOptions'
             arg "-mixin.config=hexblades.mixins.json"
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            mods {
-                hexblades {
-                    source sourceSets.main
-                }
-            }
+            mods { hexblades { source sourceSets.main } }
         }
-
         server {
             workingDirectory project.file('run')
-
+            jvmArgs '-Xmx4G', '-Xms2G', '-XX:+IgnoreUnrecognizedVMOptions'
             arg "-mixin.config=hexblades.mixins.json"
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
+            property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-
-            mods {
-                hexblades {
-                    source sourceSets.main
-                }
-            }
+            mods { hexblades { source sourceSets.main } }
         }
-
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            jvmArgs '-Xmx4G', '-Xms2G', '-XX:+IgnoreUnrecognizedVMOptions'
             args '--mod', 'hexblades', '--all',
-                    '--output', file('src/generated/resources/'),
-                    '--existing', file('src/main/resources/')
-            mods {
-                hexblades {
-                    source sourceSets.main
-                }
-            }
+                 '--output', file('src/generated/resources/'),
+                 '--existing', file('src/main/resources/')
+            mods { hexblades { source sourceSets.main } }
         }
     }
-}
-
-sourceSets.main.resources{
-    srcDir 'src/generated/resources'
 }
 
 repositories {
-    flatDir {
-        dirs 'externalmods'
-    }
-    mavenCentral()
-    maven {
-        url = "https://maven.theillusivec4.top/"
-    }
+    maven { url 'https://maven.parchmentmc.org' }
+    maven { url = "https://maven.theillusivec4.top/" }
     maven { url 'https://maven.blamejared.com' }
-
     maven {
         url "https://www.cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
+        content { includeGroup "curse.maven" }
     }
-
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-
-    maven { url "https://nexus.resourcefulbees.com/repository/maven-public/" }
-
     maven {
         name 'JEI maven'
-        url = "https://dvs1.progwml6.com/files/maven"
+        url = "https://maven.blamejared.com"
     }
+    flatDir { dirs 'libs' }
 }
 
 dependencies {
-
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.16.5-36.2.0'
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    //compats
-    compileOnly fg.deobf("vazkii.botania:Botania:1.16.5-420")
-    implementation fg.deobf("curse.maven:malum-484064:3374475") //0.3
-    compileOnly fg.deobf("curse.maven:ars_nouveau-401955:3576193")//1.24.10
+    // GeckoLib 4
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${mc_version}:${geckolib_version}")
 
-    compileOnly fg.deobf("curse.maven:druidcraft-340991:3507029")//0.4.54
-    compileOnly fg.deobf("curse.maven:occultism-361026:3574677") //1.23.6
-    //runtimeOnly fg.deobf("curse.maven:druidcraft-340991:3507029")//0.4.54
-    //runtimeOnly fg.deobf("curse.maven:occultism-361026:3574677") //1.23.6
+    // Curios
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
-    //dependencies
-    //implementation fg.deobf("elucent:eidolon:0.2.7")
-    implementation fg.deobf("curse.maven:eidolon-429625:3157832")  // Shutup experimental settings
+    // JEI
+    compileOnly fg.deobf("curse.maven:jei-238222:7920915")
 
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.16.5:3.0.103')
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.3")
-    implementation fg.deobf('mezz.jei:jei-1.16.5:7.7.1.136')
+    // Eidolon-Repraised (required)
+    implementation fg.deobf("curse.maven:eidolon-repraised-870250:7674316")
 
-    //testers
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.1")
-    //runtimeOnly fg.deobf("curse.maven:druidcraft-340991:3507029")
-    //runtimeOnly fg.deobf("curse.maven:occultism-361026:3574677")
-    runtimeOnly fg.deobf("curse.maven:exp-407174:3188120")  // Shutup experimental settings
-    //runtimeOnly fg.deobf("com.telepathicgrunt:Blame:1.16.5-3.2.0-forge")
-
+    // Optional compat (compile against APIs, do not force-load in default dev runtime)
+    // compileOnly fg.deobf("curse.maven:botania-225643:7982360")
+    // compileOnly fg.deobf("curse.maven:lodestone-616457:6213794")
+    // compileOnly fg.deobf("curse.maven:malum-484064:6646111")
+    // compileOnly fg.deobf("curse.maven:ars-nouveau-401955:6688854")
+    implementation fg.deobf("curse.maven:patchouli-306770:7731017")
+    implementation fg.deobf("curse.maven:botania-225643:7982360")
+    implementation fg.deobf("curse.maven:lodestone-616457:6213794")
+    implementation fg.deobf("curse.maven:malum-484064:6646111")
+    implementation fg.deobf("curse.maven:ars-nouveau-401955:6688854")
+    implementation fg.deobf("curse.maven:waystones-245755:7682270")
+    implementation fg.deobf("curse.maven:balm-531761:7420617")
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
+tasks.withType(ProcessResources).configureEach {
+    var replaceProperties = [
+        mc_version   : mc_version,
+        forge_version: forge_version,
+        mod_version  : mod_version,
+        mod_id       : mod_id,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "hexblades",
-                "Specification-Vendor"    : "hexblades",
-                "Specification-Version"   : "1",
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : project.jar.archiveVersion,
-                "Implementation-Vendor"   : "hexblades",
-                "MixinConfigs": "hexblades.mixins.json",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Specification-Title"     : mod_id,
+            "Specification-Vendor"    : "alexthw",
+            "Specification-Version"   : "1",
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : project.jar.archiveVersion,
+            "Implementation-Vendor"   : "alexthw",
+            "MixinConfigs"            : "hexblades.mixins.json",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
-
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar') 
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
+jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact jar
-        }
+        mavenJava(MavenPublication) { artifact jar }
     }
     repositories {
-
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
+        maven { url "file:///${project.projectDir}/mcmodsrepo" }
     }
 }
-
-apply plugin: 'org.spongepowered.mixin'
 
 mixin {
     add sourceSets.main, "hexblades.refmap.json"

@@ -1,0 +1,23 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [],
+  "pedestalItems": [
+    { "item": "eidolon:lesser_soul_gem" },
+    {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"minecraft:healing\"}"
+    },
+    { "item": "minecraft:nether_star" },
+    {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"hexblades:wither\"}"
+    },
+    { "item": "eidolon:lesser_soul_gem" }
+  ],
+  "reagent": [
+    { "item": "eidolon:sapping_sword" }
+  ],
+  "ritual": "hexblades:evolve_sapping"
+}

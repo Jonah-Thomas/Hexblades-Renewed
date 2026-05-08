@@ -1,136 +1,107 @@
 package alexthw.hexblades.common.blocks.tile_entities;
 
 import alexthw.hexblades.common.items.IHexblade;
-import alexthw.hexblades.registers.HexTileEntityType;
-import elucent.eidolon.tile.TileEntityBase;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import alexthw.hexblades.registers.HexBlockEntityType;
+import elucent.eidolon.common.tile.TileEntityBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class SwordStandTileEntity extends TileEntityBase implements IAnimatable {
+public class SwordStandTileEntity extends TileEntityBase implements GeoBlockEntity {
 
-    public ItemStack stack;
+    public ItemStack stack = ItemStack.EMPTY;
     long previous = -1L;
-    private final AnimationFactory factory = new AnimationFactory(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-
-    public SwordStandTileEntity() {
-        this(HexTileEntityType.SWORD_STAND_TILE_ENTITY);
+    public SwordStandTileEntity(BlockPos pos, BlockState state) {
+        this(HexBlockEntityType.SWORD_STAND_TILE_ENTITY.get(), pos, state);
     }
 
-    public SwordStandTileEntity(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
-        this.stack = ItemStack.EMPTY;
+    public SwordStandTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override
     public void onDestroyed(BlockState state, BlockPos pos) {
-        if (!this.stack.isEmpty()) {
-            assert this.level != null;
-            InventoryHelper.dropItemStack(this.level, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, this.stack);
+        if (!this.stack.isEmpty() && this.level != null) {
+            net.minecraft.world.Containers.dropItemStack(this.level,
+                    pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, this.stack);
         }
-
     }
 
     @Override
-    public ActionResultType onActivated(BlockState state, BlockPos pos, PlayerEntity player, Hand hand) {
-        if (hand == Hand.MAIN_HAND) {
+    public InteractionResult onActivated(BlockState state, BlockPos pos, Player player, InteractionHand hand) {
+        if (hand == InteractionHand.MAIN_HAND) {
             ItemStack itemHand = player.getItemInHand(hand);
             if (itemHand.isEmpty() && !this.stack.isEmpty()) {
                 player.addItem(this.stack);
                 this.stack = ItemStack.EMPTY;
-                assert this.level != null;
-                if (!this.level.isClientSide) {
-                    this.sync();
-                }
-
-                return ActionResultType.SUCCESS;
+                if (this.level != null && !this.level.isClientSide) this.sync();
+                return InteractionResult.SUCCESS;
             }
-
-            if (!itemHand.isEmpty() && this.stack.isEmpty() && (itemHand.getItem() instanceof IHexblade || (itemHand.getItem() instanceof SwordItem))) {
+            if (!itemHand.isEmpty() && this.stack.isEmpty()
+                    && (itemHand.getItem() instanceof IHexblade || itemHand.getItem() instanceof SwordItem)) {
                 this.stack = itemHand.copy();
                 this.stack.setCount(1);
                 itemHand.shrink(1);
-                if (player.getItemInHand(hand).isEmpty()) {
-                    player.setItemInHand(hand, ItemStack.EMPTY);
-                }
-
-                assert this.level != null;
-                if (!this.level.isClientSide) {
-                    this.sync();
-                }
-
-                return ActionResultType.SUCCESS;
+                if (player.getItemInHand(hand).isEmpty()) player.setItemInHand(hand, ItemStack.EMPTY);
+                if (this.level != null && !this.level.isClientSide) this.sync();
+                return InteractionResult.SUCCESS;
             }
         }
-
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag) {
-        super.load(state, tag);
+    public void load(CompoundTag tag) {
+        super.load(tag);
         this.stack = ItemStack.of(tag.getCompound("stack"));
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
-        tag = super.save(tag);
-        tag.put("stack", this.stack.save(new CompoundNBT()));
-        return tag;
+    public void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.put("stack", this.stack.save(new CompoundTag()));
     }
 
-    public boolean ready() {
-        return true;
-    }
+    public boolean ready() { return true; }
 
     public void pray() {
         if (this.level != null && !this.level.isClientSide) {
             this.previous = this.level.getGameTime();
             this.sync();
         }
-
     }
 
-
-    public ItemStack provide() {
-        return this.stack.copy();
-    }
+    public ItemStack provide() { return this.stack.copy(); }
 
     public void take() {
         this.stack = ItemStack.EMPTY;
-        if (this.level != null && !this.level.isClientSide) {
-            this.sync();
-        }
-
+        if (this.level != null && !this.level.isClientSide) this.sync();
     }
 
     @Override
-    public void registerControllers(AnimationData data) {
-        data.addAnimationController(new AnimationController<>(this, "controller", 0, this::predicate));
-    }
-
-    private <E extends TileEntityBase & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.sword_stand.cubes", true));
-        return PlayState.CONTINUE;
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "controller", 0, event -> {
+            event.getController().setAnimation(RawAnimation.begin()
+                    .thenLoop("animation.sword_stand.cubes"));
+            return PlayState.CONTINUE;
+        }));
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
     }
 }

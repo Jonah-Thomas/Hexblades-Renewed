@@ -26,3 +26,9 @@ run
 forge*changelog.txt
 *.bbmodel
 src/generated/resources/.cache/cache
+
+# local parity/checklist notes
+CODEX_PARITY_CHECKLIST.md
+ITEM_VISIBILITY_CHECKLIST.md
+PARITY_RECOVERY_PLAN.md
+QA_CHECKLIST.md

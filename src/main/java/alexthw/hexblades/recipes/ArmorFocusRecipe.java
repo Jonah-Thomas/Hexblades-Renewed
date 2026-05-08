@@ -2,21 +2,23 @@ package alexthw.hexblades.recipes;
 
 import alexthw.hexblades.common.items.ArmorFocus;
 import alexthw.hexblades.common.items.armors.HexWArmor;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
-public class ArmorFocusRecipe extends SpecialRecipe {
-    public static final SpecialRecipeSerializer<ArmorFocusRecipe> SERIALIZER = new SpecialRecipeSerializer<>(ArmorFocusRecipe::new);
+public class ArmorFocusRecipe extends CustomRecipe {
+    public static final SimpleCraftingRecipeSerializer<ArmorFocusRecipe> SERIALIZER = new SimpleCraftingRecipeSerializer<>(ArmorFocusRecipe::new);
 
-    public ArmorFocusRecipe(ResourceLocation pId) {
-        super(pId);
+    public ArmorFocusRecipe(ResourceLocation pId, CraftingBookCategory pCategory) {
+        super(pId, pCategory);
     }
 
     /**
@@ -26,7 +28,7 @@ public class ArmorFocusRecipe extends SpecialRecipe {
      * @param pLevel world
      */
     @Override
-    public boolean matches(CraftingInventory inv, World pLevel) {
+    public boolean matches(CraftingContainer inv, Level pLevel) {
         boolean foundFocus = false;
         boolean foundItem = false;
 
@@ -51,10 +53,12 @@ public class ArmorFocusRecipe extends SpecialRecipe {
     /**
      * Returns an Item that is the result of this recipe
      *
-     * @param inv grid
+     * @param inv      grid
+     * @param registry registry access
      */
+    @Nonnull
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registry) {
         ItemStack item = ItemStack.EMPTY;
         String focus = null;
 
@@ -87,7 +91,7 @@ public class ArmorFocusRecipe extends SpecialRecipe {
 
     @Nonnull
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return SERIALIZER;
     }
 

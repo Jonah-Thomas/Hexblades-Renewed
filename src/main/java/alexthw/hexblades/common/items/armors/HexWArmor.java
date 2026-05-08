@@ -1,31 +1,55 @@
 package alexthw.hexblades.common.items.armors;
 
+import alexthw.hexblades.client.render.entity.ArmorRenderer;
 import alexthw.hexblades.registers.HexItem;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.item.GeoArmorItem;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static alexthw.hexblades.util.Constants.ArmorCompat.FOCUS_TAG;
 
-public class HexWArmor extends GeoArmorItem implements IAnimatable {
+public class HexWArmor extends ArmorItem implements GeoItem {
 
-    public HexWArmor(EquipmentSlotType slot, Properties builderIn) {
-        super(HexWArmor.Material.INSTANCE, slot, builderIn);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+    public HexWArmor(ArmorItem.Type type, Properties builderIn) {
+        super(HexWArmor.Material.INSTANCE, type, builderIn);
+    }
+
+    @Override
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+        consumer.accept(new IClientItemExtensions() {
+            private GeoArmorRenderer<?> renderer;
+
+            @Override
+            public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+                if (this.renderer == null)
+                    this.renderer = new ArmorRenderer();
+                this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
+                return this.renderer;
+            }
+        });
     }
 
     public static String getFocus(ItemStack stack) {
@@ -34,98 +58,89 @@ public class HexWArmor extends GeoArmorItem implements IAnimatable {
     }
 
     public static void setFocus(ItemStack stack, String focus) {
-
         if (!(stack.getItem() instanceof HexWArmor)) return;
-
-        CompoundNBT tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getOrCreateTag();
         tag.putString(FOCUS_TAG, focus);
         stack.setTag(tag);
     }
 
     public static int getFocusId(ItemStack stack) {
-        String focus = stack.getOrCreateTag().getString(FOCUS_TAG);
-        switch (focus) {
-            case ("eidolon"):
-                return 1;
-            case ("botania"):
-                return 2;
-            case ("ars nouveau"):
-                return 3;
-            default:
-                return 0;
-        }
+        return switch (stack.getOrCreateTag().getString(FOCUS_TAG)) {
+            case "eidolon" -> 1;
+            case "botania" -> 2;
+            case "ars nouveau" -> 3;
+            default -> 0;
+        };
     }
 
     private static final int[] MAX_DAMAGE_ARRAY = new int[]{13, 15, 16, 11};
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> pTooltip, ITooltipFlag pFlag) {
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-        pTooltip.add(new StringTextComponent("Focus: " + getFocus(pStack)));
+        pTooltip.add(Component.literal("Focus: " + getFocus(pStack)));
     }
 
-
-    public static class Material implements IArmorMaterial {
+    public static class Material implements ArmorMaterial {
         public static final HexWArmor.Material INSTANCE = new HexWArmor.Material();
 
         public Material() {
         }
 
-        public int getDurabilityForSlot(EquipmentSlotType slot) {
+        @Override
+        public int getDurabilityForType(ArmorItem.Type type) {
+            EquipmentSlot slot = type.getSlot();
             return HexWArmor.MAX_DAMAGE_ARRAY[slot.getIndex()] * 30;
         }
 
-        public int getDefenseForSlot(EquipmentSlotType slot) {
-            switch (slot) {
-                case CHEST:
-                    return 8;
-                case HEAD:
-                case FEET:
-                    return 3;
-                case LEGS:
-                    return 6;
-                default:
-                    return 0;
-            }
+        @Override
+        public int getDefenseForType(ArmorItem.Type type) {
+            return switch (type) {
+                case CHESTPLATE -> 8;
+                case LEGGINGS -> 6;
+                case HELMET, BOOTS -> 3;
+                default -> 0;
+            };
         }
 
+        @Override
         public int getEnchantmentValue() {
             return 25;
         }
 
+        @Override
         public SoundEvent getEquipSound() {
-            return ArmorMaterial.GOLD.getEquipSound();
+            return ArmorMaterials.GOLD.getEquipSound();
         }
 
+        @Override
         public Ingredient getRepairIngredient() {
             return Ingredient.of(new ItemStack(HexItem.HEXED_INGOT.get()));
         }
 
+        @Override
         public String getName() {
             return "hexblades:hex_armor";
         }
 
+        @Override
         public float getToughness() {
             return 2.0F;
         }
 
+        @Override
         public float getKnockbackResistance() {
             return 0.075F;
         }
-
-    }
-    //useless
-
-    private final AnimationFactory factory = new AnimationFactory(this);
-
-    @Override
-    public void registerControllers(AnimationData data) {
     }
 
     @Override
-    public AnimationFactory getFactory() {
-        return this.factory;
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        // no animations needed
     }
 
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
 }
-

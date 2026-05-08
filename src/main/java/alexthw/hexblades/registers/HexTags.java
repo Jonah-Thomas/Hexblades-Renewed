@@ -2,42 +2,43 @@ package alexthw.hexblades.registers;
 
 import alexthw.hexblades.Hexblades;
 import alexthw.hexblades.util.HexUtils;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 public class HexTags {
 
     public static final class Blocks {
+        public static final TagKey<Block> CRUCIBLE_HOT_BLOCKS = makeWrapperTag("crucible_heat_source");
+        // Keep compatibility with older docs/configs that used the plural form.
+        public static final TagKey<Block> CRUCIBLE_HOT_BLOCKS_LEGACY = makeWrapperTag("crucible_heat_sources");
 
-        public static final ITag.INamedTag<Block> CRUCIBLE_HOT_BLOCKS = makeWrapperTag("crucible_heat_source");
-
-        private static ITag.INamedTag<Block> forge(String path) {
-            return BlockTags.bind(new ResourceLocation("forge", path).toString());
+        private static TagKey<Block> forge(String path) {
+            return BlockTags.create(new ResourceLocation("forge", path));
         }
 
-        private static ITag.INamedTag<Block> mod(String path) {
-            return BlockTags.bind(new ResourceLocation(Hexblades.MODID, path).toString());
+        private static TagKey<Block> mod(String path) {
+            return BlockTags.create(new ResourceLocation(Hexblades.MODID, path));
         }
     }
 
     public static final class Items {
-        public static final ITag.INamedTag<Item> HEXIUM_INGOT = forge("ingot/hexium");
-        public static final ITag.INamedTag<Item> HEX_BLADE = mod("hexblade");
+        public static final TagKey<Item> HEXIUM_INGOT = forge("ingot/hexium");
+        public static final TagKey<Item> HEX_BLADE = mod("hexblade");
 
-        public static ITag.INamedTag<Item> forge(String path) {
-            return ItemTags.bind(new ResourceLocation("forge", path).toString());
+        public static TagKey<Item> forge(String path) {
+            return ItemTags.create(new ResourceLocation("forge", path));
         }
 
-        private static ITag.INamedTag<Item> mod(String path) {
-            return ItemTags.bind(new ResourceLocation(Hexblades.MODID, path).toString());
+        private static TagKey<Item> mod(String path) {
+            return ItemTags.create(new ResourceLocation(Hexblades.MODID, path));
         }
     }
 
-    public static ITag.INamedTag<Block> makeWrapperTag(String id) {
-        return BlockTags.createOptional(HexUtils.prefix(id));
+    public static TagKey<Block> makeWrapperTag(String id) {
+        return BlockTags.create(HexUtils.prefix(id));
     }
 }

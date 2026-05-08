@@ -1,0 +1,15 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [
+    { "item": "hexblades:sword_dull" }
+  ],
+  "pedestalItems": [
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:netherite_scrap" },
+    { "item": "minecraft:magma_cream" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_core" }
+  ],
+  "ritual": "hexblades:awake_flame_sword"
+}

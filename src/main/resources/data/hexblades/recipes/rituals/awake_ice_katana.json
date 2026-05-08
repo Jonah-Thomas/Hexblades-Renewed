@@ -1,0 +1,16 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [
+    { "item": "hexblades:katana_dull" }
+  ],
+  "pedestalItems": [
+    { "item": "minecraft:blue_ice" },
+    { "item": "minecraft:blue_ice" },
+    { "item": "eidolon:wraith_heart" },
+    { "item": "eidolon:tattered_cloth" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_core" }
+  ],
+  "ritual": "hexblades:awake_ice_katana"
+}

@@ -1,100 +1,72 @@
 package alexthw.hexblades.common.items.armors;
 
-import elucent.eidolon.item.WarlockRobesItem;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import elucent.eidolon.common.item.WarlockRobesItem;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class DyebleWarlockArmor extends WarlockRobesItem {
-    public DyebleWarlockArmor(EquipmentSlotType slot, Properties builderIn) {
+
+    public DyebleWarlockArmor(ArmorItem.Type slot, Properties builderIn) {
         super(slot, builderIn);
     }
 
     @Override
-    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
+    public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
         int color = getColor(stack);
-        switch (color) {
-            case 0:
-                return "hexblades:textures/entity/warlock_robes/white.png";
-            case 1:
-                return "hexblades:textures/entity/warlock_robes/orange.png";
-            case 2:
-                return "hexblades:textures/entity/warlock_robes/magenta.png";
-            case 3:
-                return "hexblades:textures/entity/warlock_robes/light_blue.png";
-            case 4:
-                return "hexblades:textures/entity/warlock_robes/yellow.png";
-            case 5:
-                return "hexblades:textures/entity/warlock_robes/lime.png";
-            case 6:
-                return "hexblades:textures/entity/warlock_robes/pink.png";
-            case 9:
-                return "hexblades:textures/entity/warlock_robes/cyan.png";
-            case 10:
-                return "hexblades:textures/entity/warlock_robes/purple.png";
-            case 12:
-                return "hexblades:textures/entity/warlock_robes/brown.png";
-            case 13:
-                return "hexblades:textures/entity/warlock_robes/green.png";
-            case 14:
-                return "hexblades:textures/entity/warlock_robes/red.png";
-            case 15:
-                return "hexblades:textures/entity/warlock_robes/black.png";
-        }
-        return super.getArmorTexture(stack, entity, slot, type);
+        return switch (color) {
+            case 0  -> "hexblades:textures/entity/warlock_robes/white.png";
+            case 1  -> "hexblades:textures/entity/warlock_robes/orange.png";
+            case 2  -> "hexblades:textures/entity/warlock_robes/magenta.png";
+            case 3  -> "hexblades:textures/entity/warlock_robes/light_blue.png";
+            case 4  -> "hexblades:textures/entity/warlock_robes/yellow.png";
+            case 5  -> "hexblades:textures/entity/warlock_robes/lime.png";
+            case 6  -> "hexblades:textures/entity/warlock_robes/pink.png";
+            case 9  -> "hexblades:textures/entity/warlock_robes/cyan.png";
+            case 10 -> "hexblades:textures/entity/warlock_robes/purple.png";
+            case 12 -> "hexblades:textures/entity/warlock_robes/brown.png";
+            case 13 -> "hexblades:textures/entity/warlock_robes/green.png";
+            case 14 -> "hexblades:textures/entity/warlock_robes/red.png";
+            case 15 -> "hexblades:textures/entity/warlock_robes/black.png";
+            default -> super.getArmorTexture(stack, entity, slot, type);
+        };
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable World pLevel, List<ITextComponent> pTooltip, ITooltipFlag pFlag) {
+    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltip, TooltipFlag pFlag) {
         super.appendHoverText(pStack, pLevel, pTooltip, pFlag);
-        pTooltip.add(new StringTextComponent(getColor(getColor(pStack))));
+        pTooltip.add(Component.literal(getColorName(getColor(pStack))));
     }
 
     private int getColor(ItemStack stack) {
-        CompoundNBT tag = stack.getOrCreateTag();
+        CompoundTag tag = stack.getOrCreateTag();
         return tag.getInt("color");
     }
 
-    private String getColor(int index) {
-
-        switch (index) {
-            case (0):
-                return "White";
-            case (1):
-                return "Orange";
-            case (2):
-                return "Magenta";
-            case (3):
-                return "Light_blue";
-            case (4):
-                return "Yellow";
-            case (5):
-                return "Lime";
-            case (6):
-                return "Pink";
-            case (9):
-                return "Cyan";
-            case (10):
-                return "Purple";
-            case (12):
-                return "Brown";
-            case (13):
-                return "Green";
-            case (14):
-                return "Red";
-            case (15):
-                return "Black";
-            default:
-                return "Blue";
-        }
+    private String getColorName(int index) {
+        return switch (index) {
+            case 0  -> "White";
+            case 1  -> "Orange";
+            case 2  -> "Magenta";
+            case 3  -> "Light_blue";
+            case 4  -> "Yellow";
+            case 5  -> "Lime";
+            case 6  -> "Pink";
+            case 9  -> "Cyan";
+            case 10 -> "Purple";
+            case 12 -> "Brown";
+            case 13 -> "Green";
+            case 14 -> "Red";
+            case 15 -> "Black";
+            default -> "Blue";
+        };
     }
-
 }

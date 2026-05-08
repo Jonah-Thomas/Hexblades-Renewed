@@ -1,27 +1,29 @@
 package alexthw.hexblades.common.items.tier1;
 
 import alexthw.hexblades.common.items.HexSwordItem;
-import alexthw.hexblades.registers.Tiers;
 import alexthw.hexblades.util.Constants;
 import alexthw.hexblades.util.HexUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.*;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.TierSortingRegistry;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static alexthw.hexblades.ConfigHandler.COMMON;
@@ -32,10 +34,9 @@ public class EarthHammer1 extends HexSwordItem {
     protected float baseMiningSpeed;
 
     public EarthHammer1(Properties props) {
-        this(COMMON.HammerBD1.get(), -3.2F,
-                props.addToolType(net.minecraftforge.common.ToolType.PICKAXE, Tiers.PatronWeaponTier.INSTANCE.getLevel()));
+        this(7, -3.2F, props);
         baseMiningSpeed = 8.0F;
-        tooltipText = new TranslationTextComponent("tooltip.hexblades.earth_hammer");
+        tooltipText = Component.translatable("tooltip.hexblades.earth_hammer");
     }
 
     public EarthHammer1(int attack, float speed, Properties props) {
@@ -49,26 +50,26 @@ public class EarthHammer1 extends HexSwordItem {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        if (enchantment.category == EnchantmentType.DIGGER) return true;
+        if (enchantment.category == EnchantmentCategory.DIGGER) return true;
         return super.canApplyAtEnchantingTable(stack, enchantment);
     }
 
     @Override
-    public void applyHexEffects(ItemStack stack, LivingEntity target, PlayerEntity attacker, boolean awakened) {
+    public void applyHexEffects(ItemStack stack, LivingEntity target, Player attacker, boolean awakened) {
         if (stack.getOrCreateTag().getBoolean(MiningSwitch)) return;
         float power = 1.0F;
         if (awakened) {
-            target.hurt(new EntityDamageSource("anvil", attacker).bypassArmor(), COMMON.HammerED1.get().floatValue());
+            // anvil(attacker) bypasses armor by DamageType definition in 1.20.1
+            target.hurt(target.damageSources().anvil(attacker), COMMON.HammerED1.get().floatValue());
             power += (float) (getDevotion(attacker) / 30);
         }
         double X = attacker.getX() - target.getX();
         double Z = attacker.getZ() - target.getZ();
-
         target.knockback(power, X, Z);
     }
 
     @Override
-    public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
         if (player.isShiftKeyDown() && !world.isClientSide()) {
             switchMining(player.getItemInHand(hand));
         }
@@ -76,7 +77,7 @@ public class EarthHammer1 extends HexSwordItem {
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, World worldIn, Entity user, int itemSlot, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, Level worldIn, Entity user, int itemSlot, boolean isSelected) {
         if (stack.getOrCreateTag().getBoolean(MiningSwitch)) {
             return;
         }
@@ -84,73 +85,50 @@ public class EarthHammer1 extends HexSwordItem {
     }
 
     @Override
-    public void recalculatePowers(ItemStack weapon, World world, PlayerEntity player) {
+    public void recalculatePowers(ItemStack weapon, Level world, Player player) {
         double devotion = getDevotion(player);
-
         boolean mineSwitch = weapon.getOrCreateTag().getBoolean(MiningSwitch);
-
         if (!mineSwitch) setAwakenedState(weapon, !getAwakened(weapon));
-
         boolean awakening = getAwakened(weapon);
-
         setAttackPower(weapon, awakening || mineSwitch, mineSwitch ? -6 : (devotion / COMMON.HammerDS1.get()));
         setMiningSpeed(weapon, awakening, (float) (devotion / COMMON.HammerMS1.get()));
-
     }
 
     public void setMiningSpeed(ItemStack weapon, boolean awakening, float extra_mining) {
-
-        CompoundNBT tag = weapon.getOrCreateTag();
-
+        CompoundTag tag = weapon.getOrCreateTag();
         float newMiningSpeed;
-
         if (tag.getBoolean(MiningSwitch)) {
-            if (awakening) {
-                newMiningSpeed = baseMiningSpeed + extra_mining / 2;
-            } else {
-                newMiningSpeed = baseMiningSpeed;
-            }
+            newMiningSpeed = awakening ? baseMiningSpeed + extra_mining / 2 : baseMiningSpeed;
         } else {
             newMiningSpeed = 1.0F;
         }
         tag.putFloat(Constants.NBT.EXTRA_MINING_SPEED, newMiningSpeed);
-
     }
 
     @Override
-    public boolean isCorrectToolForDrops(BlockState blockIn) {
-        int i = this.getTier().getLevel();
-        if (blockIn.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
-            return i >= blockIn.getHarvestLevel();
-        }
-        Material material = blockIn.getMaterial();
-        return material == Material.STONE || material == Material.METAL || material == Material.HEAVY_METAL;
+    public boolean isCorrectToolForDrops(BlockState state) {
+        return state.is(BlockTags.MINEABLE_WITH_PICKAXE)
+                && TierSortingRegistry.isCorrectTierForDrops(getTier(), state);
     }
 
     @Override
-    public boolean canAttackBlock(BlockState state, World worldIn, BlockPos pos, PlayerEntity player) {
+    public boolean canAttackBlock(BlockState state, Level worldIn, BlockPos pos, Player player) {
         return true;
     }
 
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state) {
-
-        float result;
-
-        Material material = state.getMaterial();
-
-        if ((material == Material.STONE) && getAwakened(stack)) {
-            result = getMiningSpeed(stack) + 2.0F;
-        } else if (material == Material.METAL || material == Material.HEAVY_METAL || getToolTypes(stack).stream().anyMatch(state::isToolEffective)) {
-            result = getMiningSpeed(stack);
-        } else {
-            result = 1.0F;
+        if (state.is(BlockTags.MINEABLE_WITH_PICKAXE)) {
+            if (getAwakened(stack)) {
+                return getMiningSpeed(stack) + 2.0F;
+            }
+            return getMiningSpeed(stack);
         }
-        return result;
+        return 1.0F;
     }
 
     public void switchMining(ItemStack weapon) {
-        CompoundNBT tag = weapon.getOrCreateTag();
+        CompoundTag tag = weapon.getOrCreateTag();
         tag.putBoolean(MiningSwitch, !tag.getBoolean(MiningSwitch));
         weapon.setTag(tag);
     }
@@ -160,32 +138,33 @@ public class EarthHammer1 extends HexSwordItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
         super.appendHoverText(stack, worldIn, tooltip, flagIn);
-        tooltip.add(new TranslationTextComponent("Mining mode:" + (stack.getOrCreateTag().getBoolean(MiningSwitch) ? "On" : "Off")));
+        tooltip.add(Component.translatable("Mining mode:" + (stack.getOrCreateTag().getBoolean(MiningSwitch) ? "On" : "Off")));
     }
 
     @Override
-    public boolean mineBlock(ItemStack stack, World worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
-        if (!worldIn.isClientSide && (state.getDestroySpeed(worldIn, pos) != 0.0F) && entityLiving instanceof PlayerEntity) {
+    public boolean mineBlock(ItemStack stack, Level worldIn, BlockState state, BlockPos pos, LivingEntity entityLiving) {
+        if (!worldIn.isClientSide() && (state.getDestroySpeed(worldIn, pos) != 0.0F) && entityLiving instanceof Player player) {
             if (stack.getMaxDamage() - stack.getDamageValue() < 51) {
                 switchMining(stack);
-                recalculatePowers(stack, worldIn, (PlayerEntity) entityLiving);
+                recalculatePowers(stack, worldIn, player);
             } else {
-                stack.hurtAndBreak(50, entityLiving, (entity) -> entity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+                stack.hurtAndBreak(50, entityLiving, entity -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             }
         }
         return true;
     }
 
     @Override
-    public void talk(PlayerEntity player) {
-        player.sendMessage(new TranslationTextComponent(this.getDescriptionId() + ".dialogue." + player.level.getRandom().nextInt(dialogueLines)).setStyle(Style.EMPTY.withItalic(true).withColor(Color.fromRgb(HexUtils.earthColor))), player.getUUID());
+    public void talk(Player player) {
+        player.sendSystemMessage(Component.translatable(this.getDescriptionId() + ".dialogue." + player.level().getRandom().nextInt(dialogueLines))
+                .withStyle(Style.EMPTY.withItalic(true).withColor(TextColor.fromRgb(HexUtils.earthColor))));
     }
 
     @Override
-    protected void addShiftTooltip(ItemStack stack, List<ITextComponent> tooltip) {
-        tooltip.add(new StringTextComponent("Armor piercing damage: " + COMMON.HammerED1.get()));
-        tooltip.add(new StringTextComponent("Strong knockback"));
+    protected void addShiftTooltip(ItemStack stack, List<Component> tooltip) {
+        tooltip.add(Component.literal("Armor piercing damage: " + COMMON.HammerED1.get()));
+        tooltip.add(Component.literal("Strong knockback"));
     }
 }

@@ -1,0 +1,16 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [
+    { "item": "hexblades:hammer_dull" }
+  ],
+  "pedestalItems": [
+    { "item": "minecraft:obsidian" },
+    { "item": "minecraft:obsidian" },
+    { "item": "eidolon:lead_block" },
+    { "item": "eidolon:lead_block" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_core" }
+  ],
+  "ritual": "hexblades:awake_earth_hammer"
+}

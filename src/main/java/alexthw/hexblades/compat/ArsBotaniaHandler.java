@@ -1,22 +1,16 @@
 package alexthw.hexblades.compat;
 
-import alexthw.hexblades.client.render.entity.ArmorRenderer;
 import alexthw.hexblades.common.items.armors.ArsBotaniaArmor;
 import alexthw.hexblades.common.items.armors.HexWArmor;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
 
 public class ArsBotaniaHandler {
-    public static HexWArmor makeArmor(EquipmentSlotType slot, Item.Properties properties) {
-        return new ArsBotaniaArmor(slot, properties);
+    public static HexWArmor makeArmor(ArmorItem.Type type, Item.Properties properties) {
+        return new ArsBotaniaArmor(type, properties);
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static void renderer() {
-        GeoArmorRenderer.registerArmorRenderer(ArsBotaniaArmor.class, ArmorRenderer::new);
+        // GeckoLib4: armor renderer is registered via initializeClient() on ArsBotaniaArmor itself
     }
-
 }

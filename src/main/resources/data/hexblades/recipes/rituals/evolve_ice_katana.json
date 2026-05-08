@@ -1,0 +1,19 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [],
+  "pedestalItems": [
+    { "item": "minecraft:quartz" },
+    {
+      "type": "forge:partial_nbt",
+      "item": "minecraft:potion",
+      "nbt": "{Potion:\"eidolon:chilled\"}"
+    },
+    { "item": "hexblades:elemental_soul" },
+    { "item": "eidolon:wraith_heart" },
+    { "item": "minecraft:quartz" }
+  ],
+  "reagent": [
+    { "item": "hexblades:ice_katana_1" }
+  ],
+  "ritual": "hexblades:evolve_ice_katana"
+}

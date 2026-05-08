@@ -1,0 +1,8 @@
+{
+  "type": "hexblades:fire_temple",
+  "structure_settings": {
+    "biomes": "#minecraft:is_nether",
+    "step": "surface_structures",
+    "spawn_overrides": {}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [],
+  "pedestalItems": [
+    { "item": "minecraft:redstone" },
+    { "item": "minecraft:phantom_membrane" },
+    { "item": "hexblades:thunder_knives_left1" },
+    { "item": "hexblades:thunder_knives_right1" },
+    { "item": "minecraft:phantom_membrane" },
+    { "item": "minecraft:redstone" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_soul" }
+  ],
+  "ritual": "hexblades:evolve_duals"
+}

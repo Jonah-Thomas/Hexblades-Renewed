@@ -2,24 +2,28 @@ package alexthw.hexblades.recipes;
 
 import alexthw.hexblades.common.items.armors.DyebleWarlockArmor;
 import alexthw.hexblades.registers.HexItem;
-import elucent.eidolon.item.WarlockRobesItem;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import elucent.eidolon.common.item.WarlockRobesItem;
+// Note: WarlockRobesItem extends ArmorItem; getEquipmentSlot() inherited from ArmorItem
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
+import net.minecraft.world.level.Level;
 
-public class WarlockArmorDye extends SpecialRecipe {
+public class WarlockArmorDye extends CustomRecipe {
 
-    public static final SpecialRecipeSerializer<WarlockArmorDye> SERIALIZER = new SpecialRecipeSerializer<>(WarlockArmorDye::new);
+    public static final SimpleCraftingRecipeSerializer<WarlockArmorDye> SERIALIZER = new SimpleCraftingRecipeSerializer<>(WarlockArmorDye::new);
 
-    public WarlockArmorDye(ResourceLocation pId) {
-        super(pId);
+    public WarlockArmorDye(ResourceLocation pId, CraftingBookCategory pCategory) {
+        super(pId, pCategory);
     }
 
     /**
@@ -29,7 +33,7 @@ public class WarlockArmorDye extends SpecialRecipe {
      * @param pLevel world
      */
     @Override
-    public boolean matches(CraftingInventory inv, World pLevel) {
+    public boolean matches(CraftingContainer inv, Level pLevel) {
         boolean foundDye = false;
         boolean foundItem = false;
 
@@ -56,10 +60,11 @@ public class WarlockArmorDye extends SpecialRecipe {
     /**
      * Returns an Item that is the result of this recipe
      *
-     * @param inv grid
+     * @param inv      grid
+     * @param registry registry access
      */
     @Override
-    public ItemStack assemble(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv, RegistryAccess registry) {
         ItemStack item = ItemStack.EMPTY;
         DyeColor dye = null;
 
@@ -83,22 +88,19 @@ public class WarlockArmorDye extends SpecialRecipe {
             dyed.getOrCreateTag().putInt("color", dye.getId());
 
         } else {
-            CompoundNBT tag = item.getOrCreateTag();
+            CompoundTag tag = item.getOrCreateTag();
             tag.putInt("color", dye.getId());
             WarlockRobesItem robes = (WarlockRobesItem) item.getItem();
-            switch (robes.getSlot()) {
-                case HEAD:
-                    dyed = new ItemStack(HexItem.DYE_WARLOCK_H.get(), 1);
-                    dyed.setTag(tag);
-                    break;
-                case CHEST:
-                    dyed = new ItemStack(HexItem.DYE_WARLOCK_C.get(), 1);
-                    dyed.setTag(tag);
-                    break;
-                case FEET:
-                    dyed = new ItemStack(HexItem.DYE_WARLOCK_F.get(), 1);
-                    dyed.setTag(tag);
-                    break;
+            EquipmentSlot slot = robes.getEquipmentSlot();
+            if (slot == EquipmentSlot.HEAD) {
+                dyed = new ItemStack(HexItem.DYE_WARLOCK_H.get(), 1);
+                dyed.setTag(tag);
+            } else if (slot == EquipmentSlot.CHEST) {
+                dyed = new ItemStack(HexItem.DYE_WARLOCK_C.get(), 1);
+                dyed.setTag(tag);
+            } else if (slot == EquipmentSlot.FEET) {
+                dyed = new ItemStack(HexItem.DYE_WARLOCK_F.get(), 1);
+                dyed.setTag(tag);
             }
         }
 
@@ -112,7 +114,7 @@ public class WarlockArmorDye extends SpecialRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return SERIALIZER;
     }
 }

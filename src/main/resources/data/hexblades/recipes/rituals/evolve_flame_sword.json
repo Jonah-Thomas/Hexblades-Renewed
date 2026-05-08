@@ -1,0 +1,14 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [],
+  "pedestalItems": [
+    { "item": "eidolon:shadow_gem" },
+    { "item": "hexblades:elemental_soul" },
+    { "item": "eidolon:crimson_essence" },
+    { "item": "eidolon:crimson_essence" }
+  ],
+  "reagent": [
+    { "item": "hexblades:flame_sword_1" }
+  ],
+  "ritual": "hexblades:evolve_flame_sword"
+}

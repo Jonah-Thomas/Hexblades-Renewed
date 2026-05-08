@@ -1,0 +1,16 @@
+{
+  "type": "eidolon:ritual_brazier",
+  "focusItems": [
+    { "item": "hexblades:saber_dull" }
+  ],
+  "pedestalItems": [
+    { "item": "minecraft:prismarine_shard" },
+    { "item": "minecraft:prismarine_shard" },
+    { "item": "minecraft:prismarine_shard" },
+    { "item": "hexblades:drowned_heart" }
+  ],
+  "reagent": [
+    { "item": "hexblades:elemental_core" }
+  ],
+  "ritual": "hexblades:awake_water_saber"
+}

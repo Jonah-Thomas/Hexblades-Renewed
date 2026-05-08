@@ -1,87 +1,70 @@
 modLoader="javafml"
-loaderVersion = "[35,)"
-license = "BSD License"
-# A URL to refer people to when problems occur with this mod
-#issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
-[[mods]] #mandatory
-modId = "hexblades"
-version = "0.0.9"
-displayName = "Hexblades"
-# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-#updateJSONURL="https://change.me.example.invalid/updates.json" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile = "hexblades_logo.png" #optional
-credits = "Alexthw, elucent"
-authors = "Alexthw"
-description = '''
+loaderVersion="[47,)"
+license="BSD License"
+
+[[mods]]
+modId="hexblades"
+version="${mod_version}"
+displayName="Hexblades"
+logoFile="hexblades_logo.png"
+credits="Alexthw, elucent"
+authors="Alexthw"
+description='''
 This mod adds Hexblades to Eidolon, few magic gadgets and compatibility patches with other mods.
 '''
 
-[[dependencies.hexblades]] #optional
-modId = "forge" #mandatory
-# Does this dependency have to exist - if not, ordering below must be specified
-mandatory = true #mandatory
-versionRange = "[35,)" #mandatory
-# An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-ordering = "NONE"
-side = "BOTH"
+[[dependencies.hexblades]]
+modId="forge"
+mandatory=true
+versionRange="[47,)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "minecraft"
-mandatory = true
-versionRange = "[1.16.4,1.17)"
-ordering = "NONE"
-side = "BOTH"
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.21)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "eidolon"
-mandatory = true
-versionRange = "[0.2.7]"
-ordering = "NONE"
-side = "BOTH"
+modId="geckolib"
+mandatory=true
+versionRange="[4.4,)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "geckolib3"
-mandatory = true
-versionRange = "[3.0,)"
-ordering = "NONE"
-side = "BOTH"
-
-#optionals
+modId="curios"
+mandatory=true
+versionRange="[5.7,)"
+ordering="NONE"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "botania"
-mandatory = false
-versionRange = "[1.16.5-418,)"
-ordering = "AFTER"
-side = "BOTH"
+modId="eidolon"
+mandatory=true
+versionRange="[0.3,)"
+ordering="AFTER"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "malum"
-mandatory = false
-versionRange = "[1.16.5-0.3.0,)"
-ordering = "AFTER"
-side = "BOTH"
+modId="botania"
+mandatory=false
+versionRange="[1.20.1-440,)"
+ordering="AFTER"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "druidcraft"
-mandatory = false
-versionRange = "[0.4.5,)"
-ordering = "AFTER"
-side = "BOTH"
+modId="ars_nouveau"
+mandatory=false
+versionRange="[4.0,)"
+ordering="AFTER"
+side="BOTH"
 
 [[dependencies.hexblades]]
-modId = "occultism"
-mandatory = false
-versionRange = "[1.16.5-1.15.0,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies.hexblades]]
-modId = "ars_nouveau"
-mandatory = false
-versionRange = "[1.24.0,)"
-ordering = "AFTER"
-side = "BOTH"
+modId="malum"
+mandatory=false
+versionRange="[1.20.1-,)"
+ordering="AFTER"
+side="BOTH"

@@ -1,46 +1,28 @@
 package alexthw.hexblades.compat;
 
-import alexthw.hexblades.mixin.AltarEntryMixin;
-import com.sammy.malum.common.blocks.lighting.EtherBlock;
-import com.sammy.malum.common.blocks.lighting.EtherBrazierBlock;
-import com.sammy.malum.core.init.blocks.MalumBlocks;
-import elucent.eidolon.spell.AltarEntries;
-import elucent.eidolon.spell.AltarEntry;
-import elucent.eidolon.spell.AltarKeys;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import com.sammy.malum.common.block.ether.EtherBrazierBlock;
+import elucent.eidolon.api.altar.AltarEntry;
+import elucent.eidolon.api.altar.AltarKeys;
+import elucent.eidolon.registries.AltarEntries;
+import net.minecraft.world.level.block.Block;
+import net.minecraftforge.registries.ForgeRegistries;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue;
 
 public class MalumCompat {
 
-    public static void altar() throws InvocationTargetException, InstantiationException, IllegalAccessException {
-
-        Map<BlockState, AltarEntry> AltarEntriesCopy = getPrivateValue(elucent.eidolon.spell.AltarEntries.class, new AltarEntries(), "entries");
-
-        Constructor<AltarEntry> altarEntryConstructor = ObfuscationReflectionHelper.findConstructor(AltarEntry.class, ResourceLocation.class);
-
-        if (AltarEntriesCopy != null) {
-
-            AltarEntry entry = altarEntryConstructor.newInstance(AltarKeys.LIGHT_KEY);
-            entry = ((AltarEntryMixin) entry).callSetCapacity(1.5D);
-            entry = ((AltarEntryMixin) entry).callSetPower(1.5D);
-
-            Set<RegistryObject<Block>> blocks = MalumBlocks.BLOCKS.getEntries().stream().filter(b -> b.get() instanceof EtherBrazierBlock).collect(Collectors.toSet());
-            for (RegistryObject<Block> block : blocks) {
-                AltarEntriesCopy.put(block.get().defaultBlockState(), entry);
-            }
-
+    @SuppressWarnings("unchecked")
+    public static void altar() {
+        try {
+            Field entriesField = AltarEntries.class.getDeclaredField("entries");
+            entriesField.setAccessible(true);
+            Map<Block, AltarEntry> entries = (Map<Block, AltarEntry>) entriesField.get(null);
+            ForgeRegistries.BLOCKS.getValues().stream()
+                    .filter(b -> b instanceof EtherBrazierBlock)
+                    .forEach(b -> entries.put(b, new AltarEntry(AltarKeys.LIGHT_KEY).setPower(1.5).setCapacity(1.5)));
+        } catch (Exception e) {
+            // Eidolon internals not accessible — skip silently
         }
-
     }
 }

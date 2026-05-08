@@ -1,16 +1,20 @@
 package alexthw.hexblades.common.blocks;
 
-import elucent.eidolon.block.HorizontalBlockBase;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
+import alexthw.hexblades.common.blocks.tile_entities.SwordStandTileEntity;
+import elucent.eidolon.common.block.HorizontalBlockBase;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.stream.Stream;
 
-public class SwordStandBlock extends HorizontalBlockBase {
+public class SwordStandBlock extends HorizontalBlockBase implements EntityBlock {
 
     public SwordStandBlock(Properties properties) {
         super(properties);
@@ -20,13 +24,17 @@ public class SwordStandBlock extends HorizontalBlockBase {
                 Block.box(13, 1, 2, 14, 2, 13),
                 Block.box(2, 1, 2, 13, 2, 3),
                 Block.box(3, 1, 13, 14, 2, 14)
-        ).reduce((v1, v2) -> VoxelShapes.join(v1, v2, IBooleanFunction.OR)).get();
+        ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
         setShape(VSHAPE);
     }
 
     @Override
-    public BlockRenderType getRenderShape(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new SwordStandTileEntity(pos, state);
+    }
 }

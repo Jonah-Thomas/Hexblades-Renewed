@@ -1,6 +1,6 @@
 package alexthw.hexblades.mixin;
 
-import elucent.eidolon.spell.AltarEntry;
+import elucent.eidolon.api.altar.AltarEntry;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 

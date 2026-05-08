@@ -1,42 +1,42 @@
-package alexthw.hexblades.client.render.models;// Made with Blockbench 3.9.3
-// Exported for Minecraft version 1.15 - 1.16 with MCP mappings
-// Paste this class into your mod and generate all required imports
-
+package alexthw.hexblades.client.render.models;
 
 import alexthw.hexblades.Hexblades;
 import alexthw.hexblades.common.entity.FireElementalEntity;
-import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 import javax.annotation.Nullable;
 
-public class FireElementalModel extends AnimatedGeoModel<FireElementalEntity> {
+public class FireElementalModel extends GeoModel<FireElementalEntity> {
 
     @Override
-    public ResourceLocation getModelLocation(FireElementalEntity ElementalEntity) {
-        return new ResourceLocation(Hexblades.MODID, "geo/" + "fire_elemental_v2.geo.json");
+    public ResourceLocation getModelResource(FireElementalEntity entity) {
+        return new ResourceLocation(Hexblades.MODID, "geo/fire_elemental_v2.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FireElementalEntity ElementalEntity) {
-        return new ResourceLocation(Hexblades.MODID, "textures/entity/" + "fire_elemental_v2.png");
+    public ResourceLocation getTextureResource(FireElementalEntity entity) {
+        return new ResourceLocation(Hexblades.MODID, "textures/entity/fire_elemental_v2.png");
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(FireElementalEntity ElementalEntity) {
+    public ResourceLocation getAnimationResource(FireElementalEntity entity) {
         return new ResourceLocation(Hexblades.MODID, "animations/animation.hexblades.fe.json");
     }
 
     @Override
-    public void setLivingAnimations(FireElementalEntity entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-        super.setLivingAnimations(entity, uniqueID, customPredicate);
-        if (customPredicate == null) return;
-        IBone head = this.getAnimationProcessor().getBone("head");
-        EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
-        head.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
-        head.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
+    public void setCustomAnimations(FireElementalEntity entity, long instanceId, @Nullable AnimationState<FireElementalEntity> animationState) {
+        super.setCustomAnimations(entity, instanceId, animationState);
+        if (animationState == null) return;
+        CoreGeoBone head = getAnimationProcessor().getBone("head");
+        if (head == null) return;
+        EntityModelData extraData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        if (extraData == null) return;
+        head.setRotX(extraData.headPitch() * ((float) Math.PI / 180F));
+        head.setRotY(extraData.netHeadYaw() * ((float) Math.PI / 180F));
     }
 }

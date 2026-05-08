@@ -143,7 +143,7 @@
   "hexblades.codex.page.sanguine_wither": "The Sapping Sword was created by the Dark one and gifted to warlocks, a tale of the life-stealer blade tells of a wielder that left trails of withered corpses. Perhaps feeding energy of life and death, the star may awaken a stronger withering power.",
   "hexblades.codex.chapter.compats": "Mod integrations",
   "hexblades.codex.page.compats.title": "More flames for alchemy",
-  "hexblades.codex.page.compats": "If Malum or another mod that adds new Campfires or Fire is loaded, the Crucible will now recognize them as valid heat source. Druidcraft Soulfire and Occultism Spiritfire are natively supported, more can be added with the tag crucible_heat_sources.",
+  "hexblades.codex.page.compats": "If Malum or another mod that adds new Campfires or Fire is loaded, the Crucible will now recognize them as valid heat source. Druidcraft Soulfire and Occultism Spiritfire are natively supported, more can be added with the tag hexblades:crucible_heat_source.",
   "hexblades.codex.page.compats.malum.title": "Ether for the Dark Lord",
   "hexblades.codex.page.compats.malum": "Ether, a magic flame created from souls, can be used as an heat source for the crucible without any risk of damage or fire. Braziers can also act as altar enhancement, at the same level as candlesticks",
   "hexblades.codex.page.altar_ether.brazier": "1.5 power, 1.5 capacity",

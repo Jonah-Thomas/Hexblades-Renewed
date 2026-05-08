@@ -5,30 +5,32 @@ import alexthw.hexblades.common.items.IHexblade;
 import alexthw.hexblades.registers.HexItem;
 import alexthw.hexblades.registers.HexTags;
 import alexthw.hexblades.util.HexUtils;
-import net.minecraft.data.BlockTagsProvider;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.ItemTagsProvider;
-import net.minecraft.item.Item;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
+
+import java.util.concurrent.CompletableFuture;
 
 public class HexItemTagProvider extends ItemTagsProvider {
 
-    public HexItemTagProvider(DataGenerator dataGenerator, BlockTagsProvider blockTagProvider, ExistingFileHelper existingFileHelper) {
-        super(dataGenerator, blockTagProvider, Hexblades.MODID, existingFileHelper);
+    public HexItemTagProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, BlockTagsProvider blockTagProvider, ExistingFileHelper existingFileHelper) {
+        super(packOutput, lookupProvider, blockTagProvider.contentsGetter(), Hexblades.MODID, existingFileHelper);
     }
 
-
-    public static ITag.INamedTag<Item> makeWrapperTag(String id) {
-        return ItemTags.createOptional(HexUtils.prefix(id));
+    public static net.minecraft.tags.TagKey<Item> makeWrapperTag(String id) {
+        return ItemTags.create(HexUtils.prefix(id));
     }
 
     @Override
-    protected void addTags() {
+    protected void addTags(HolderLookup.Provider pProvider) {
         this.copy(BlockTags.PLANKS, ItemTags.PLANKS);
         this.copy(BlockTags.STAIRS, ItemTags.STAIRS);
         this.copy(BlockTags.SLABS, ItemTags.SLABS);
@@ -47,6 +49,6 @@ public class HexItemTagProvider extends ItemTagsProvider {
 
     @Override
     public String getName() {
-        return "HexBlades Block Tags";
+        return "HexBlades Item Tags";
     }
 }

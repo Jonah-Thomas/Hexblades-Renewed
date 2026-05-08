@@ -6,19 +6,19 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import elucent.eidolon.spell.KnowledgeUtil;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import elucent.eidolon.util.KnowledgeUtil;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 
 public class CmdFacts {
 
     private static final CmdFacts CMD = new CmdFacts();
 
-    public static ArgumentBuilder<CommandSource, ?> register(CommandDispatcher<CommandSource> dispatcher) {
+    public static ArgumentBuilder<CommandSourceStack, ?> register(CommandDispatcher<CommandSourceStack> dispatcher) {
         return Commands.literal("facts")
                 .requires(cs -> cs.hasPermission(2))
                 .then(Commands.argument("player", EntityArgument.player())
@@ -35,24 +35,15 @@ public class CmdFacts {
                 );
     }
 
-    public int giveFact(PlayerEntity player, String factName) {
-        ResourceLocation fact;
-        switch (factName) {
-            case ("awakening_ritual"):
-                fact = HexFacts.AWAKENING_RITUAL;
-                break;
-            case ("evolution_ritual"):
-                fact = HexFacts.EVOLVE_RITUAL;
-                break;
-            case ("elemental_summoning"):
-                fact = HexFacts.ELEMENTAL_SUMMON;
-                break;
-            case ("villager_sacrifice"):
-                fact = HexFacts.VILLAGER_SACRIFICE;
-                break;
-            default:
-                return 0;
-        }
+    public int giveFact(Player player, String factName) {
+        ResourceLocation fact = switch (factName) {
+            case "awakening_ritual" -> HexFacts.AWAKENING_RITUAL;
+            case "evolution_ritual" -> HexFacts.EVOLVE_RITUAL;
+            case "elemental_summoning" -> HexFacts.ELEMENTAL_SUMMON;
+            case "villager_sacrifice" -> HexFacts.ELEMENTAL_SUMMON;
+            default -> null;
+        };
+        if (fact == null) return 0;
 
         if (!KnowledgeUtil.knowsFact(player, fact)) {
             KnowledgeUtil.grantFact(player, fact);
@@ -61,30 +52,21 @@ public class CmdFacts {
         return Command.SINGLE_SUCCESS;
     }
 
-    public int hasFact(CommandContext<CommandSource> ctx, PlayerEntity player, String factName) {
-        ResourceLocation fact;
-        switch (factName) {
-            case ("awakening_ritual"):
-                fact = HexFacts.AWAKENING_RITUAL;
-                break;
-            case ("evolution_ritual"):
-                fact = HexFacts.EVOLVE_RITUAL;
-                break;
-            case ("star_infusion"):
-                fact = HexFacts.ELEMENTAL_SUMMON;
-                break;
-            case ("villager_sacrifice"):
-                fact = HexFacts.VILLAGER_SACRIFICE;
-                break;
-            default:
-                return 0;
-        }
+    public int hasFact(CommandContext<CommandSourceStack> ctx, Player player, String factName) {
+        ResourceLocation fact = switch (factName) {
+            case "awakening_ritual" -> HexFacts.AWAKENING_RITUAL;
+            case "evolution_ritual" -> HexFacts.EVOLVE_RITUAL;
+            case "star_infusion" -> HexFacts.ELEMENTAL_SUMMON;
+            case "villager_sacrifice" -> HexFacts.ELEMENTAL_SUMMON;
+            default -> null;
+        };
+        if (fact == null) return 0;
+
         if (KnowledgeUtil.knowsFact(player, fact)) {
-            ctx.getSource().sendSuccess(new StringTextComponent("true"), false);
+            ctx.getSource().sendSuccess(() -> Component.literal("true"), false);
         } else {
-            ctx.getSource().sendFailure(new StringTextComponent("false"));
+            ctx.getSource().sendFailure(Component.literal("false"));
         }
         return Command.SINGLE_SUCCESS;
     }
-
 }

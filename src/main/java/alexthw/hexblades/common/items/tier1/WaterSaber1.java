@@ -3,13 +3,16 @@ package alexthw.hexblades.common.items.tier1;
 import alexthw.hexblades.common.items.HexSwordItem;
 import alexthw.hexblades.util.Constants;
 import alexthw.hexblades.util.HexUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.text.*;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
@@ -18,14 +21,14 @@ import static alexthw.hexblades.ConfigHandler.COMMON;
 public class WaterSaber1 extends HexSwordItem {
 
     public WaterSaber1(Properties props) {
-        super(COMMON.SaberBD1.get(), -2.4F, props);
-        tooltipText = new TranslationTextComponent("tooltip.hexblades.water_saber");
-        textColor = TextFormatting.DARK_AQUA;
+        super(5, -2.4F, props);
+        tooltipText = Component.translatable("tooltip.hexblades.water_saber");
+        textColor = ChatFormatting.DARK_AQUA;
     }
 
     public WaterSaber1(int attackDamage, float attackSpeed, Properties props) {
         super(attackDamage, attackSpeed, props);
-        textColor = TextFormatting.DARK_AQUA;
+        textColor = ChatFormatting.DARK_AQUA;
     }
 
     @Override
@@ -34,12 +37,12 @@ public class WaterSaber1 extends HexSwordItem {
     }
 
     @Override
-    public void applyHexBonus(PlayerEntity entity, boolean awakened) {
-        if (awakened) entity.addEffect(new EffectInstance(Effects.WATER_BREATHING, 200, 0, false, false));
+    public void applyHexBonus(Player entity, boolean awakened) {
+        if (awakened) entity.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, 200, 0, false, false));
     }
 
     @Override
-    public void recalculatePowers(ItemStack weapon, World world, PlayerEntity player) {
+    public void recalculatePowers(ItemStack weapon, Level world, Player player) {
         double devotion = getDevotion(player);
 
         boolean awakening = setAwakenedState(weapon, !getAwakened(weapon));
@@ -49,13 +52,13 @@ public class WaterSaber1 extends HexSwordItem {
     }
 
     public void setShielding(ItemStack weapon, boolean awakening, float damageReduction) {
-        CompoundNBT tag = weapon.getOrCreateTag();
+        CompoundTag tag = weapon.getOrCreateTag();
         tag.putFloat(Constants.NBT.SHIELDING, awakening ? damageReduction : 0);
     }
 
     @Override
-    public void talk(PlayerEntity player) {
-        player.sendMessage(new TranslationTextComponent(this.getDescriptionId() + ".dialogue." + player.level.getRandom().nextInt(dialogueLines)).setStyle(Style.EMPTY.withItalic(true).withColor(Color.fromRgb(HexUtils.waterColor))), player.getUUID());
+    public void talk(Player player) {
+        player.sendSystemMessage(Component.translatable(this.getDescriptionId() + ".dialogue." + player.level().getRandom().nextInt(dialogueLines)).setStyle(Style.EMPTY.withItalic(true).withColor(TextColor.fromRgb(HexUtils.waterColor))));
     }
 
     public float getShielding(ItemStack weapon) {
@@ -63,8 +66,8 @@ public class WaterSaber1 extends HexSwordItem {
     }
 
     @Override
-    protected void addShiftTooltip(ItemStack stack, List<ITextComponent> tooltip) {
-        tooltip.add(new StringTextComponent("Damage reduction: " + getShielding(stack)));
-        tooltip.add(new StringTextComponent("Gives water breathing"));
+    protected void addShiftTooltip(ItemStack stack, List<Component> tooltip) {
+        tooltip.add(Component.literal("Damage reduction: " + getShielding(stack)));
+        tooltip.add(Component.literal("Gives water breathing"));
     }
 }

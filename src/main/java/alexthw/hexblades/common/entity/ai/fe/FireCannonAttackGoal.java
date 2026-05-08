@@ -1,9 +1,9 @@
 package alexthw.hexblades.common.entity.ai.fe;
 
 import alexthw.hexblades.common.entity.FireElementalEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.EnumSet;
 
@@ -56,9 +56,8 @@ public class FireCannonAttackGoal extends Goal {
 
     @Override
     public void tick() {
-        //pathfinding
         double d0 = this.Firenando.distanceToSqr(this.target.getX(), this.target.getY(), this.target.getZ());
-        boolean flag = this.Firenando.getSensing().canSee(this.target);
+        boolean flag = this.Firenando.getSensing().hasLineOfSight(this.target);
         if (flag) {
             ++this.seeTime;
         } else {
@@ -73,19 +72,17 @@ public class FireCannonAttackGoal extends Goal {
 
         this.attackTime = Math.max(attackTime - 1, 0);
 
-        //attack zone
         if ((this.attackTime == 0) && flag) {
             this.Firenando.setAnimationState(1);
             this.attackTime = attackInterval;
         } else if ((this.attackTime == 30) && (this.Firenando.getAnimationState() == 1)) {
             this.Firenando.loadCannon(true);
         } else if ((this.attackTime == 15) && (this.Firenando.getAnimationState() == 1)) {
-            float f = MathHelper.sqrt(d0) / this.attackRadius;
-            float lvt_5_1_ = MathHelper.clamp(f, 0.1F, 1.0F);
+            float f = Mth.sqrt((float) d0) / this.attackRadius;
+            float lvt_5_1_ = Mth.clamp(f, 0.1F, 1.0F);
             this.Firenando.performRangedAttack(this.target, lvt_5_1_);
         } else if (this.attackTime == 1) {
             this.Firenando.setAnimationState(0);
         }
     }
-
 }

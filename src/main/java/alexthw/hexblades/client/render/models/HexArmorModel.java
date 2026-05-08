@@ -1,26 +1,25 @@
 package alexthw.hexblades.client.render.models;
 
 import alexthw.hexblades.common.items.armors.HexWArmor;
-import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.model.GeoModel;
 
 import static alexthw.hexblades.util.HexUtils.prefix;
 
-public class HexArmorModel extends AnimatedGeoModel<HexWArmor> {
+public class HexArmorModel extends GeoModel<HexWArmor> {
 
     @Override
-    public ResourceLocation getModelLocation(HexWArmor armor) {
+    public ResourceLocation getModelResource(HexWArmor armor) {
         return prefix("geo/armor.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureLocation(HexWArmor armor) {
+    public ResourceLocation getTextureResource(HexWArmor armor) {
         return prefix("textures/entity/hex_armor.png");
     }
 
     @Override
-    public ResourceLocation getAnimationFileLocation(HexWArmor animatable) {
+    public ResourceLocation getAnimationResource(HexWArmor animatable) {
         return null;
     }
-
 }
