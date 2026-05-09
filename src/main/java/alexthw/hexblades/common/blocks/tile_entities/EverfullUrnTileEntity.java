@@ -1,7 +1,10 @@
 package alexthw.hexblades.common.blocks.tile_entities;
 
+import alexthw.hexblades.compat.BotaniaCompat;
 import alexthw.hexblades.network.RefillEffectPacket;
 import alexthw.hexblades.registers.HexBlockEntityType;
+import alexthw.hexblades.registers.HexRegistry;
+import elucent.eidolon.common.tile.CrucibleTileEntity;
 import elucent.eidolon.common.tile.TileEntityBase;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -11,12 +14,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static alexthw.hexblades.ConfigHandler.COMMON;
 import static alexthw.hexblades.util.CompatUtil.isBotaniaLoaded;
+import static alexthw.hexblades.util.HexUtils.getTilesWithinAABB;
 
 public class EverfullUrnTileEntity extends TileEntityBase {
 
@@ -32,16 +37,25 @@ public class EverfullUrnTileEntity extends TileEntityBase {
         if (level == null) return;
         if (!level.isClientSide() && level.getGameTime() % COMMON.UrnTickRate.get() == 0) {
             fillCauldrons(level, pos);
-            // TODO: Eidolon-Repraised — CrucibleBlockEntity hasWater refill
-            // The old ObfuscationReflectionHelper approach to set hasWater is removed.
-            // Verify Eidolon-Repraised CrucibleBlockEntity API for water-filling.
-            // fillCrucibles(level, pos);
+            fillCrucibles(level, pos);
 
-            // TODO: Botania compat — re-enable once Botania 1.20.1 is confirmed available
-            // if (isBotaniaLoaded()) BotaniaCompat.refillApotecaries(level, pos);
+            if (isBotaniaLoaded()) {
+                BotaniaCompat.refillApotecaries(level, pos);
+            }
 
-            // Send refill effect packet to clients
-            // TODO: port RefillEffectPacket to Forge 47 — done in Phase 8
+        }
+    }
+
+    private static void fillCrucibles(Level level, BlockPos origin) {
+        AABB bb = new AABB(origin.offset(-2, -1, -2), origin.offset(3, 2, 3));
+        for (CrucibleTileEntity crucible : getTilesWithinAABB(CrucibleTileEntity.class, level, bb)) {
+            if (!crucible.hasWater) {
+                crucible.fill();
+                crucible.sync();
+                HexRegistry.CHANNEL.send(
+                        PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(crucible.getBlockPos())),
+                        new RefillEffectPacket(crucible.getBlockPos(), 1.0F));
+            }
         }
     }
 
@@ -57,6 +71,9 @@ public class EverfullUrnTileEntity extends TileEntityBase {
                             && scanState.hasProperty(BlockStateProperties.LEVEL_CAULDRON)
                             && scanState.getValue(BlockStateProperties.LEVEL_CAULDRON) < 3) {
                         level.setBlock(scan, scanState.setValue(BlockStateProperties.LEVEL_CAULDRON, 3), Block.UPDATE_ALL);
+                        HexRegistry.CHANNEL.send(
+                                PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(scan)),
+                                new RefillEffectPacket(scan, 1.0F));
                     }
                 }
             }

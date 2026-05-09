@@ -4,11 +4,11 @@ import alexthw.hexblades.common.items.armors.BotaniaArmor;
 import alexthw.hexblades.common.items.armors.HexWArmor;
 import alexthw.hexblades.network.RefillEffectPacket;
 import alexthw.hexblades.registers.HexItem;
+import alexthw.hexblades.registers.HexRegistry;
 import alexthw.hexblades.util.HexUtils;
 import elucent.eidolon.codex.Page;
 import elucent.eidolon.codex.TitlePage;
 import elucent.eidolon.codex.WorktablePage;
-import elucent.eidolon.network.Networking;
 import elucent.eidolon.recipe.WorktableRecipe;
 import elucent.eidolon.recipe.WorktableRegistry;
 import net.minecraft.core.BlockPos;
@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -34,7 +35,9 @@ public class BotaniaCompat {
         for (var fillable : apothecaries) {
             if (fillable.getFluid() == vazkii.botania.api.block.PetalApothecary.State.EMPTY) {
                 fillable.setFluid(vazkii.botania.api.block.PetalApothecary.State.WATER);
-                Networking.sendToTracking(world, urn, new RefillEffectPacket(fillable.getBlockPos(), 0.5F));
+                HexRegistry.CHANNEL.send(
+                        PacketDistributor.TRACKING_CHUNK.with(() -> world.getChunkAt(fillable.getBlockPos())),
+                        new RefillEffectPacket(fillable.getBlockPos(), 0.5F));
             }
         }
     }

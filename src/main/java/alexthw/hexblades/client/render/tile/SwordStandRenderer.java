@@ -53,9 +53,9 @@ public class SwordStandRenderer extends GeoBlockRenderer<SwordStandTileEntity> {
             poseStack.pushPose();
             Item item = iStack.getItem();
             if ((item instanceof EarthHammer1) || (item instanceof Hammer_dull)) {
-                poseStack.translate(0.5D, 0.3D, 0.5D);
+                poseStack.translate(0.05D, 0.3D, 0.1D);
             } else if (item instanceof SwordItem || item instanceof IHexblade) {
-                poseStack.translate(0.1D, 0D, 0.5D);
+                poseStack.translate(0.05D, 0.4D, 0.1D);
                 poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(45.0F));
             }
             poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(2.0F * ((float) (mc.level.getGameTime() % 360L) + partialTicks)));

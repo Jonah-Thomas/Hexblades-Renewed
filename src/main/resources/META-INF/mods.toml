@@ -7,10 +7,10 @@ modId="hexblades"
 version="${mod_version}"
 displayName="Hexblades"
 logoFile="hexblades_logo.png"
-credits="Alexthw, elucent"
-authors="Alexthw"
+credits="Alexthw, elucent, bluelotuscoding"
+authors="Alexthw, bluelotuscoding"
 description='''
-This mod adds Hexblades to Eidolon, few magic gadgets and compatibility patches with other mods.
+A 1.20.1 port of Hexblades for Eidolon, fully brought into the modern platform after completion testing. Weapon behavior may still require additional in-world testing.
 '''
 
 [[dependencies.hexblades]]

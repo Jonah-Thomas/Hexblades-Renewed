@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "hexblades:custom_models/hammer_dull_3d",
-		"particle": "hexblades:custom_models/hammer_dull_3d"
+  "0": "hexblades:custom_models/hammer_dull_3d",
+  "particle": "hexblades:custom_models/hammer_dull_3d"
 	},
 	"elements": [
 		{

@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:magma_block",
+    "minecraft:fire",
+    "minecraft:soul_fire",
+    "minecraft:lava",
+    {
+      "id": "malum:tainted_ether_brazier",
+      "required": false
+    },
+    {
+      "id": "malum:twisted_ether_brazier",
+      "required": false
+    },
+    {
+      "id": "malum:tainted_iridescent_ether_brazier",
+      "required": false
+    },
+    {
+      "id": "malum:twisted_iridescent_ether_brazier",
+      "required": false
+    },
+    {
+      "id": "occultism:spirit_fire",
+      "required": false
+    },
+    {
+      "id": "ars_nouveau:magic_fire",
+      "required": false
+    }
+  ]
+}
