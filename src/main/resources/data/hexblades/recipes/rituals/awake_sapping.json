@@ -1,6 +1,8 @@
 {
   "type": "eidolon:ritual_brazier",
-  "focusItems": [],
+  "focusItems": [
+    { "item": "hexblades:greatsword_dull" }
+  ],
   "pedestalItems": [
     { "item": "eidolon:lesser_soul_gem" },
     {
@@ -8,7 +10,6 @@
       "item": "minecraft:potion",
       "nbt": "{Potion:\"minecraft:healing\"}"
     },
-    { "item": "minecraft:nether_star" },
     {
       "type": "forge:partial_nbt",
       "item": "minecraft:potion",
@@ -17,7 +18,7 @@
     { "item": "eidolon:lesser_soul_gem" }
   ],
   "reagent": [
-    { "item": "hexblades:blood_sword_1" }
+    { "item": "hexblades:elemental_core" }
   ],
-  "ritual": "hexblades:evolve_sapping"
+  "ritual": "hexblades:awake_sapping"
 }

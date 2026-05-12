@@ -5,6 +5,7 @@ import alexthw.hexblades.common.items.ElementalSoul;
 import alexthw.hexblades.common.items.HexSwordItem;
 import alexthw.hexblades.common.items.armors.DyebleWarlockArmor;
 import alexthw.hexblades.common.items.dulls.*;
+import alexthw.hexblades.common.items.dulls.GreatSword_dull;
 import alexthw.hexblades.common.items.tier1.*;
 import alexthw.hexblades.common.items.tier2.*;
 import alexthw.hexblades.compat.ArmorCompatHandler;
@@ -55,6 +56,7 @@ public class HexItem {
     //Hexblades
     public static final RegistryObject<Item> DEV_SWORD;
     public static final RegistryObject<Item> BLOOD_SWORD;
+    public static final RegistryObject<Item> BLOOD_SWORD1;
 
     //DULLS
     public static final RegistryObject<Item> DULL_KATANA;
@@ -62,6 +64,7 @@ public class HexItem {
     public static final RegistryObject<Item> DULL_SABER;
     public static final RegistryObject<Item> DULL_HAMMER;
     public static final RegistryObject<Item> DULL_DAGGER;
+    public static final RegistryObject<Item> DULL_GREATSWORD;
 
     //AWAKENED
     public static final RegistryObject<Item> FROST_RAZOR;
@@ -113,10 +116,12 @@ public class HexItem {
         DULL_SABER = ITEMS.register("saber_dull", () -> new Saber_dull(2, -2.4F, addTabProp().stacksTo(1)));
         DULL_HAMMER = ITEMS.register("hammer_dull", () -> new Hammer_dull(3, -3.4F, addTabProp().stacksTo(1)));
         DULL_DAGGER = ITEMS.register("dagger_dull", () -> new Dagger_dull(0, -1.5F, addTabProp().stacksTo(1)));
+        DULL_GREATSWORD = ITEMS.register("greatsword_dull", () -> new GreatSword_dull(3, -2.8F, addTabProp().stacksTo(1)));
 
         //Hexblades
         DEV_SWORD = ITEMS.register("dev_sword_1", () -> new HexSwordItem(3, -1.6F, addTabProp().stacksTo(1)));
-        BLOOD_SWORD = ITEMS.register("blood_sword", () -> new SanguineSword(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.RARE)));
+        BLOOD_SWORD = ITEMS.register("blood_sword_1", () -> new SanguineSword(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.UNCOMMON)));
+        BLOOD_SWORD1 = ITEMS.register("blood_sword_2", () -> new SanguineSword2(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.RARE)));
 
         FROST_RAZOR = ITEMS.register("ice_katana_1", () -> new IceKatana1(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.UNCOMMON)));
         FROST_RAZOR1 = ITEMS.register("ice_katana_2", () -> new IceKatana2(addTabProp().stacksTo(1).fireResistant().rarity(Rarity.RARE)));

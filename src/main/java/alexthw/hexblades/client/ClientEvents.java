@@ -80,7 +80,6 @@ public class ClientEvents {
             registerToggleAnimation(HexItem.LIGHTNING_SSWORD_R.get());
             registerToggleAnimation(HexItem.BLOOD_SWORD.get());
 
-            registerToggleDrillAnimation(HexItem.EARTH_HAMMER.get());
             registerToggleDrillAnimation(HexItem.EARTH_HAMMER1.get());
         });
     }

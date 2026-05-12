@@ -5,7 +5,6 @@ import alexthw.hexblades.compat.ArmorCompatHandler;
 import alexthw.hexblades.deity.HexFacts;
 import alexthw.hexblades.registers.HexBlock;
 import alexthw.hexblades.registers.HexItem;
-import alexthw.hexblades.ritual.HexRituals;
 import alexthw.hexblades.util.CompatUtil;
 import alexthw.hexblades.spells.HexSpells;
 import com.sammy.malum.registry.common.item.ItemRegistry;
@@ -124,7 +123,10 @@ public class CodexHexChapters {
                     nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/evolve_earth_hammer"))),
                     //evolve dual
                     new TitlePage(makePageKey("evolve_duals")),
-                    nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/evolve_duals")))
+                                        nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/evolve_duals"))),
+                                        //evolve blood sword
+                                        new TitlePage(makePageKey("evolve_blood_sword")),
+                                        nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/evolve_sapping")))
             );
         }
 
@@ -185,6 +187,7 @@ public class CodexHexChapters {
 
             SANGUINE_UPGRADE = new Chapter(makeChapterKey("sanguine_upgrade"),
                     new TitlePage(makePageKey("sanguine_wither")),
+                    nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/awake_sapping"))),
                     nukeRecipe(COMMON.NUKE_RITUALS.get(), new RitualPage(new ResourceLocation(Hexblades.MODID, "rituals/evolve_sapping")))
             );
         }
@@ -259,7 +262,7 @@ public class CodexHexChapters {
                         factLockedVisibleSlot(THUNDER_DUALS, new ItemStack(HexItem.LIGHTNING_DAGGER_L.get()), HexFacts.AWAKENING_RITUAL)
                 ),
                 new IndexPage(
-                        factLockedVisibleSlot(SANGUINE_UPGRADE, new ItemStack(HexItem.BLOOD_SWORD.get()), HexFacts.EVOLVE_RITUAL)
+                        factLockedVisibleSlot(SANGUINE_UPGRADE, new ItemStack(HexItem.BLOOD_SWORD.get()), HexFacts.AWAKENING_RITUAL)
                 )
         );
 

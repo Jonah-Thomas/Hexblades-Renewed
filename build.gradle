@@ -85,18 +85,11 @@ dependencies {
     // Eidolon-Repraised (required)
     implementation fg.deobf("curse.maven:eidolon-repraised-870250:7674316")
 
-    // Optional compat (compile against APIs, do not force-load in default dev runtime)
-    // compileOnly fg.deobf("curse.maven:botania-225643:7982360")
-    // compileOnly fg.deobf("curse.maven:lodestone-616457:6213794")
-    // compileOnly fg.deobf("curse.maven:malum-484064:6646111")
-    // compileOnly fg.deobf("curse.maven:ars-nouveau-401955:6688854")
-    implementation fg.deobf("curse.maven:patchouli-306770:7731017")
-    implementation fg.deobf("curse.maven:botania-225643:7982360")
-    implementation fg.deobf("curse.maven:lodestone-616457:6213794")
-    implementation fg.deobf("curse.maven:malum-484064:6646111")
-    implementation fg.deobf("curse.maven:ars-nouveau-401955:6688854")
-    implementation fg.deobf("curse.maven:waystones-245755:7682270")
-    implementation fg.deobf("curse.maven:balm-531761:7420617")
+    // Optional compat APIs (compile-time only, runtime-optional)
+    compileOnly fg.deobf("curse.maven:botania-225643:7982360")
+    compileOnly fg.deobf("curse.maven:malum-484064:6646111")
+    compileOnly fg.deobf("curse.maven:ars-nouveau-401955:6688854")
+    compileOnly fg.deobf("curse.maven:lodestone-616457:6213794")
 }
 
 tasks.withType(ProcessResources).configureEach {

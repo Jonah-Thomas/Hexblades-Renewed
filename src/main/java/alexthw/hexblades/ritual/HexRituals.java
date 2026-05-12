@@ -26,6 +26,7 @@ public class HexRituals {
     public static Ritual AWAKE_SABER;
     public static Ritual AWAKE_HAMMER;
     public static Ritual AWAKE_DAGGER;
+    public static Ritual AWAKE_SAPPING;
 
     public static Ritual EVOLVE_SWORD;
     public static Ritual EVOLVE_KATANA;
@@ -89,6 +90,15 @@ public class HexRituals {
                         .addRequirement(new ItemRequirement(Registry.PEWTER_INGOT.get()))
         );
 
+        AWAKE_SAPPING = RitualRegistry.register(new ResourceLocation(Hexblades.MODID, "awake_sapping"),
+                new AwakenRitual(new ItemStack(HexItem.BLOOD_SWORD.get()), fireColor)
+                        .addRequirement(new ItemRequirement(Registry.LESSER_SOUL_GEM.get()))
+                        .addRequirement(new ItemRequirement(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.HEALING)))
+                        .addRequirement(new ItemRequirement(HexItem.ELEMENTAL_CORE.get()))
+                        .addRequirement(new ItemRequirement(PotionUtils.setPotion(new ItemStack(Items.POTION), HexRegistry.WITHER_POTION.get())))
+                        .addRequirement(new ItemRequirement(Registry.LESSER_SOUL_GEM.get()))
+        );
+
         //evolve
         EVOLVE_SWORD = RitualRegistry.register(new ResourceLocation(Hexblades.MODID, "evolve_flame_sword"),
                 new EvolveRitual(new ItemStack(HexItem.FIRE_BRAND1.get()), fireColor)
@@ -134,7 +144,7 @@ public class HexRituals {
         );
 
         EVOLVE_SAPPING = RitualRegistry.register(new ResourceLocation(Hexblades.MODID, "evolve_sapping"),
-                new EvolveRitual(new ItemStack(HexItem.BLOOD_SWORD.get()), fireColor)
+                new EvolveRitual(new ItemStack(HexItem.BLOOD_SWORD1.get()), fireColor)
                         .addRequirement(new ItemRequirement(Registry.LESSER_SOUL_GEM.get()))
                         .addRequirement(new ItemRequirement(PotionUtils.setPotion(new ItemStack(Items.POTION), Potions.HEALING)))
                         .addRequirement(new ItemRequirement(Items.NETHER_STAR))
