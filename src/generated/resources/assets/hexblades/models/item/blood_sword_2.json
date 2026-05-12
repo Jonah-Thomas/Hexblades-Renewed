@@ -1,20 +1,20 @@
 {
   "parent": "hexblades:item/large_sword",
   "textures": {
-    "layer0": "hexblades:item/flame_sword_2"
+    "layer0": "hexblades:item/blood_sword_2"
   },
   "overrides": [
     {
       "predicate": {
         "hexblades:awakened": 0.0
       },
-      "model": "hexblades:item/variants/flame_sword_2_deactivated"
+      "model": "hexblades:item/variants/blood_sword_2_deactivated"
     },
     {
       "predicate": {
         "hexblades:awakened": 1.0
       },
-      "model": "hexblades:item/variants/flame_sword_2_activated"
+      "model": "hexblades:item/variants/blood_sword_2_activated"
     }
   ]
 }

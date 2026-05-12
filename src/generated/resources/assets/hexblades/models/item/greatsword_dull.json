@@ -1,6 +1,6 @@
 {
   "parent": "hexblades:item/large_sword",
   "textures": {
-    "layer0": "hexblades:item/katana_dull"
+    "layer0": "hexblades:item/greatsword_dull"
   }
 }

@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:item/handheld",
+  "parent": "hexblades:item/large_sword",
   "textures": {
     "layer0": "hexblades:item/water_saber_2"
   },
