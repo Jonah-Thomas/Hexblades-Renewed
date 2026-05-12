@@ -1,4 +1,5 @@
 {
+  "parent": "hexblades:item/large_sword",
   "textures": {
     "layer0": "hexblades:item/blood_sword_activated"
   }
